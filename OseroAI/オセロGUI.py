@@ -27,9 +27,10 @@ class Start(tk.Tk):
             x=10
             xx=60
             for j in range(8):    
-                self.board.create_rectangle(x,y,xx,yy,tag="s1")
+                self.board.create_rectangle(x,y,xx,yy,tag="s"+str(i)+"d"+str(j))
+                self.board.bind('<1>',self.leftClick)#左クリック
                 x+=50
-                xx+=50  
+                xx+=50
             y+=50
             yy+=50
                     
@@ -37,7 +38,16 @@ class Start(tk.Tk):
         self.mainloop()        
         
     def targetDelete(self):
-        self.board.delete("s1")
+        self.board.delete("s3d0")
+        
+    def leftClick(self,event):
+        x=self.board.canvasx(event.x)
+        y=self.board.canvasy(event.y)
+#        l=[self.boarditemcget(obj,'tags')for obj in self.board.find_overlapping(x,y,x,y)]
+        l=[self.boarditemcget(obj,'tags')for obj in self.board.find_overlapping(x,y,x,y)]
+
+        print(l)
+        print("test")
         
 if __name__=="__main__":
         start=Start()
