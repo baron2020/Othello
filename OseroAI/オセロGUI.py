@@ -43,7 +43,6 @@ class Start(tk.Tk):
     def leftClick(self,event):
         x=self.board.canvasx(event.x)
         y=self.board.canvasy(event.y)
-#        l=[self.boarditemcget(obj,'tags')for obj in self.board.find_overlapping(x,y,x,y)]
         l=[self.boarditemcget(obj,'tags')for obj in self.board.find_overlapping(x,y,x,y)]
 
         print(l)
