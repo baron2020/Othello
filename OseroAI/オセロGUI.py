@@ -10,7 +10,7 @@ class Start(tk.Tk):
     def __init__(self):
         super(Start,self).__init__()
         self.title('オセロ')#タイトル
-        self.geometry("{}x{}+{}+{}".format(420, 500, 800, 100))#(サイズw,h,メインウィンドウの立ち上がり位置x,y)
+        self.geometry("{}x{}+{}+{}".format(420, 500, 550, 25))#(サイズw,h,メインウィンドウの立ち上がり位置x,y)
         self.resizable(width=0,height=0)#メインウィンドウの拡大・縮小禁止
         #boardの設定
         self.set_board()
@@ -27,7 +27,7 @@ class Start(tk.Tk):
             x=10
             xx=60
             for j in range(8):    
-                self.board.create_rectangle(x,y,xx,yy,tag="s"+str(i)+"d"+str(j))
+                self.board.create_rectangle(x,y,xx,yy,tag="d"+str(i)+"s"+str(j))
                 self.board.bind('<1>',self.leftClick)#左クリック
                 x+=50
                 xx+=50
@@ -38,7 +38,7 @@ class Start(tk.Tk):
         self.mainloop()        
         
     def targetDelete(self):
-        self.board.delete("s3d0")
+        self.board.delete("d3s0")
         
     def leftClick(self,event):
         x=self.board.canvasx(event.x)
