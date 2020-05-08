@@ -13,9 +13,9 @@ class Start(tk.Tk):
         self.geometry("{}x{}+{}+{}".format(420, 500, 550, 25))#(サイズw,h,メインウィンドウの立ち上がり位置x,y)
         self.resizable(width=0,height=0)#メインウィンドウの拡大・縮小禁止
         #boardの設定
-        self.set_board()
-            
-    def set_board(self):
+        self.create_widgets()
+        
+    def create_widgets(self):
         #boardを作成する
         self.board=tk.Canvas(width=420,height=420,bg="lime green")#canvasの設定
         self.board.pack()#canvasをwindowに貼り付け
@@ -28,29 +28,29 @@ class Start(tk.Tk):
             xx=60
             for j in range(8):    
                 self.board.create_rectangle(x,y,xx,yy,tag="d"+str(i)+"s"+str(j))
-                self.board.bind('<1>',self.leftClick)#左クリック
                 x+=50
                 xx+=50
             y+=50
             yy+=50
-                    
-    def run(self):
-        self.mainloop()        
-        
+        self.board.create_oval(161,161,209,209,fill="white")            
+        self.board.create_oval(211,161,259,209,fill="black")          
+        self.board.create_oval(161,211,209,259,fill="black")
+        self.board.create_oval(211,211,259,259,fill="white")
+        self.board.bind('<ButtonPress-1>',self.get_coordinate)#左クリック
+       
     def targetDelete(self):
         self.board.delete("d3s0")
         
-    def leftClick(self,event):
-        x=self.board.canvasx(event.x)
-        y=self.board.canvasy(event.y)
-        l=[self.boarditemcget(obj,'tags')for obj in self.board.find_overlapping(x,y,x,y)]
-
-        print(l)
-        print("test")
-        
+    def get_coordinate(self,event):
+        print('x:'+str(event.x))
+        print('y:'+str(event.y))
+    
+    def run(self):
+        self.mainloop()
+ 
 if __name__=="__main__":
         start=Start()
-        start.targetDelete()
+        # start.targetDelete()
         start.run()
 
         
