@@ -88,8 +88,50 @@ class Start(tk.Tk):
     def get_coordinate(self,event):
         print('x:'+str(event.x))
         print('y:'+str(event.y))
-        
-    
+        if event.x > 10 and event.x < 60:
+            xNum=0
+        elif event.x > 60 and event.x < 110:
+            xNum=1
+        elif event.x > 110 and event.x < 160:
+            xNum=2
+        elif event.x > 160 and event.x < 210:
+            xNum=3
+        elif event.x > 210 and event.x < 260:
+            xNum=4
+        elif event.x > 260 and event.x < 310:
+            xNum=5
+        elif event.x > 310 and event.x < 360:
+            xNum=6
+        elif event.x > 360 and event.x < 410:
+            xNum=7
+        else:
+            xNum=-1
+        if event.y > 10 and event.y < 60:
+            yNum=0
+        elif event.y > 60 and event.y < 110:
+            yNum=1
+        elif event.y > 110 and event.y < 160:
+            yNum=2
+        elif event.y > 160 and event.y < 210:
+            yNum=3
+        elif event.y > 210 and event.y < 260:
+            yNum=4
+        elif event.y > 260 and event.y < 310:
+            yNum=5
+        elif event.y > 310 and event.y < 360:
+            yNum=6
+        elif event.y > 360 and event.y < 410:
+            yNum=7 
+        else:
+            yNum=-1
+        print(xNum)  
+        print(yNum)
+        if xNum!=-1 and yNum !=-1:
+            currentMasu='d'+str(yNum)+'s'+str(xNum)
+        else:
+            currentMasu='盤外です'
+        print(currentMasu)
+  
     def btn_click1(self):
         print(self.xxx)
         self.xxx='bbb'
