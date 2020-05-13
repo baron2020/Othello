@@ -13,24 +13,25 @@ class Start(tk.Tk):
         self.geometry("{}x{}+{}+{}".format(420, 500, 550, 25))#(サイズw,h,メインウィンドウの立ち上がり位置x,y)
         self.resizable(width=0,height=0)#メインウィンドウの拡大・縮小禁止
         #盤面情報
-        self.gameRecode={'a1':'None','b1':'None','c1':'None','d1':'None','e1':'None','f1':'None','g1':'None','h1':'None',
-                         'a2':'None','b2':'None','c2':'None','d2':'None','e2':'None','f2':'None','g2':'None','h2':'None',
-                         'a3':'None','b3':'None','c3':'None','d3':'None','e3':'None','f3':'None','g3':'None','h3':'None',
-                         'a4':'None','b4':'None','c4':'None','d4':'white','e4':'black','f4':'None','g4':'None','h4':'None',
-                         'a5':'None','b5':'None','c5':'None','d5':'black','e5':'white','f5':'None','g5':'None','h5':'None',
-                         'a6':'None','b6':'None','c6':'None','d6':'None','e6':'None','f6':'None','g6':'None','h6':'None',
-                         'a7':'None','b7':'None','c7':'None','d7':'None','e7':'None','f7':'None','g7':'None','h7':'None',
-                         'a8':'None','b8':'None','c8':'None','d8':'None','e8':'None','f8':'None','g8':'None','h8':'None'
+        self.gameRecode={'d1s1':'None','d1s2':'None','d1s3':'None','d1s4':'None','d1s5':'None','d1s6':'None','d1s7':'None','d1s8':'None',
+                         'd2s1':'None','d2s2':'None','d2s3':'None','d2s4':'None','d2s5':'None','d2s6':'None','d2s7':'None','d2s8':'None',
+                         'd3s1':'None','d3s2':'None','d3s3':'None','d3s4':'None','d3s5':'None','d3s6':'None','d3s7':'None','d3s8':'None',
+                         'd4s1':'None','d4s2':'None','d4s3':'None','d4s4':'white','d4s5':'black','d4s6':'None','d4s7':'None','d4s8':'None',
+                         'd5s1':'None','d5s2':'None','d5s3':'None','d5s4':'black','d5s5':'white','d5s6':'None','d5s7':'None','d5s8':'None',
+                         'd6s1':'None','d6s2':'None','d6s3':'None','d6s4':'None','d6s5':'None','d6s6':'None','d6s7':'None','d6s8':'None',
+                         'd7s1':'None','d7s2':'None','d7s3':'None','d7s4':'None','d7s5':'None','d7s6':'None','d7s7':'None','d7s8':'None',
+                         'd8s1':'None','d8s2':'None','d8s3':'None','d8s4':'None','d8s5':'None','d8s6':'None','d8s7':'None','d8s8':'None'
                          }
         #盤面情報のキー
-        self.gameRecodeKeys=['a1','b1','c1','d1','e1','f1','g1','h1',
-                             'a2','b2','c2','d2','e2','f2','g2','h2',
-                             'a3','b3','c3','d3','e3','f3','g3','h3',
-                             'a4','b4','c4','d4','e4','f4','g4','h4',
-                             'a5','b5','c5','d5','e5','f5','g5','h5',
-                             'a6','b6','c6','d6','e6','f6','g6','h6',
-                             'a7','b7','c7','d7','e7','f7','g7','h7',
-                             'a8','b8','c8','d8','e8','f8','g8','h8']
+        self.gameRecodeKeys=['d1s1','d1s2','d1s3','d1s4','d1s5','d1s6','d1s7','d1s8',
+                             'd2s1','d2s2','d2s3','d2s4','d2s5','d2s6','d2s7','d2s8',
+                             'd3s1','d3s2','d3s3','d3s4','d3s5','d3s6','d3s7','d3s8',
+                             'd4s1','d4s2','d4s3','d4s4','d4s5','d4s6','d4s7','d4s8',
+                             'd5s1','d5s2','d5s3','d5s4','d5s5','d5s6','d5s7','d5s8',
+                             'd6s1','d6s2','d6s3','d6s4','d6s5','d6s6','d6s7','d6s8',
+                             'd7s1','d7s2','d7s3','d7s4','d7s5','d7s6','d7s7','d7s8',
+                             'd8s1','d8s2','d8s3','d8s4','d8s5','d8s6','d8s7','d8s8'
+                             ]
         #盤面描写位置座標
         self.boardCoordinate=[[10,10,60,60],[60,10,110,60],[110,10,160,60],[160,10,210,60],[210,10,260,60],[260,10,310,60],[310,10,360,60],[360,10,410,60],
                               [10,60,60,110],[60,60,110,110],[110,60,160,110],[160,60,210,110],[210,60,260,110],[260,60,310,110],[310,60,360,110],[360,60,410,110],
@@ -53,10 +54,13 @@ class Start(tk.Tk):
                               ]      
         #game情報
         self.teban='黒'
+        self.rivalTeban='白'
+        self.blackNum=2
+        self.whiteNum=2
         self.tebanText=tk.StringVar()
-        self.text1=tk.StringVar()
+        self.bWText=tk.StringVar()
         self.tebanText.set(self.teban+"の手番です")
-        self.text1.set("黒：2 白：2")
+        self.bWText.set("黒："+str(self.blackNum)+' '+"白："+str(self.whiteNum))
         #boardの描写
         self.create_board()
         #テスト用
@@ -79,8 +83,8 @@ class Start(tk.Tk):
         self.board.teban=tk.Label(textvariable=self.tebanText)
         self.board.teban.place(x=200,y=450)
     
-        self.board.label1=tk.Label(textvariable=self.text1)
-        self.board.label1.place(x=325,y=450)
+        self.board.label1=tk.Label(textvariable=self.bWText)
+        self.board.label1.place(x=300,y=450)
        
         #デバッグ用ボタン
         self.board.btn1=tk.Button(text='配列',command=self.btn_click1)
@@ -104,21 +108,21 @@ class Start(tk.Tk):
         print('x:'+str(event.x))
         print('y:'+str(event.y))        
         if event.x > 10 and event.x < 60:
-            xNum='a'
+            xNum=1
         elif event.x > 60 and event.x < 110:
-            xNum='b'
+            xNum=2
         elif event.x > 110 and event.x < 160:
-            xNum='c'
+            xNum=3
         elif event.x > 160 and event.x < 210:
-            xNum='d'
+            xNum=4
         elif event.x > 210 and event.x < 260:
-            xNum='e'
+            xNum=5
         elif event.x > 260 and event.x < 310:
-            xNum='f'
+            xNum=6
         elif event.x > 310 and event.x < 360:
-            xNum='g'
+            xNum=7
         elif event.x > 360 and event.x < 410:
-            xNum='h'
+            xNum=8
         else:
             xNum=-1
         if event.y > 10 and event.y < 60:
@@ -141,13 +145,37 @@ class Start(tk.Tk):
             yNum=-1
         
         if xNum!=-1 and yNum !=-1:
-            currentMasu=str(xNum)+str(yNum)
+            currentMasu='d'+str(yNum)+'s'+str(xNum)
         else:
             currentMasu='盤外です'
-        print(currentMasu)
+        print('カレントマス:'+currentMasu)
+        
+        #もしクリックした場所が盤内なら
         if currentMasu in self.gameRecodeKeys:
             print(self.gameRecodeKeys.index(currentMasu))
+            print(self.gameRecode.get(currentMasu))
+            if self.gameRecode.get(currentMasu)=='None':
+                print('石はありません')
+                #合法手か確認する
+                #合法手であれば、クリックした場所に石を置く
+                print('置く場所:'+currentMasu)
+                sIndex=self.gameRecodeKeys.index(currentMasu)
+                #石を描写する
+                if self.teban == "黒":                    
+                    self.board.create_oval(self.stoneCoordinate[sIndex][0],self.stoneCoordinate[sIndex][1],
+                                           self.stoneCoordinate[sIndex][2],self.stoneCoordinate[sIndex][3],fill="black")
+                    self.gameRecode[currentMasu]="black"#ゲーム記録も更新する
+                else:
+                    self.board.create_oval(self.stoneCoordinate[sIndex][0],self.stoneCoordinate[sIndex][1],
+                                           self.stoneCoordinate[sIndex][2],self.stoneCoordinate[sIndex][3],fill="white")
+                    self.gameRecode[currentMasu]="white"#ゲーム記録も更新する
+                
+                
+            else:
+                print('石があります')
+                #リセット
         self.tebanChange()
+        print(self.gameRecode)
   
     def btn_click1(self):
         print(self.xxx)
@@ -164,9 +192,11 @@ class Start(tk.Tk):
         print("投了")
 
     def btn_click5(self):
-        self.text1.set("ボタンを押しました")
-        if self.teban == "黒":
-            print(self.teban)
+        self.blackNum=5
+        self.whiteNum=5
+        self.bWText.set("黒："+str(self.blackNum)+" 白："+str(self.whiteNum))
+        
+
 
     def tebanChange(self):
         if self.teban == "黒":
@@ -175,7 +205,9 @@ class Start(tk.Tk):
             self.teban = "黒" 
         print(self.teban)
         self.tebanText.set(self.teban+"の手番です")
-           
+        self.blackNum=5
+        self.whiteNum=5
+        self.bWText.set("黒："+str(self.blackNum)+" 白："+str(self.whiteNum))  
    
     
     def run(self):
