@@ -175,7 +175,8 @@ class Start(tk.Tk):
                 print('石があります')
                 #リセット
         self.tebanChange()
-        print(self.gameRecode)
+        print(list(self.gameRecode.values()))
+        
   
     def btn_click1(self):
         print(self.xxx)
@@ -205,11 +206,16 @@ class Start(tk.Tk):
             self.teban = "黒" 
         print(self.teban)
         self.tebanText.set(self.teban+"の手番です")
-        self.blackNum=5
-        self.whiteNum=5
+        self.blackNum=0
+        self.whiteNum=0
+        temp=list(self.gameRecode.values())#値の確認
+        for stone in temp:
+            if stone=='black':
+               self.blackNum+=1
+            elif stone=='white':
+               self.whiteNum+=1
         self.bWText.set("黒："+str(self.blackNum)+" 白："+str(self.whiteNum))  
    
-    
     def run(self):
         self.mainloop()
  
