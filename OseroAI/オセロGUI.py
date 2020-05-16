@@ -51,7 +51,13 @@ class Start(tk.Tk):
                               [11,261,59,309],[61,261,109,309],[111,261,159,309],[161,261,209,309],[211,261,259,309],[261,261,309,309],[311,261,359,309],[361,261,409,309],
                               [11,311,59,359],[61,311,109,359],[111,311,159,359],[161,311,209,359],[211,311,259,359],[261,311,309,359],[311,311,359,359],[361,311,409,359],
                               [11,361,59,409],[61,361,109,409],[111,361,159,409],[161,361,209,409],[211,361,259,409],[261,361,309,409],[311,361,359,409],[361,361,409,409]
-                              ]      
+                              ] 
+        #合法手確認関連
+        self.checkTRBL=['top','top_right','right','rigth_bottom','bottom','bottom_left','left','left_top']
+        self.checkTRBL_Coordinate=[[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]]
+        self.gouhousyuArray=[]
+        self.existRivalStoneFlg=False#ライバルの石が間に存在しない
+        
         #game情報
         self.teban='黒'
         self.rivalTeban='白'
@@ -66,6 +72,8 @@ class Start(tk.Tk):
         #テスト用
         self.xxx='aaa'
         
+    
+
     def create_board(self):
         #boardを作成する
         self.board=tk.Canvas(width=420,height=420,bg="lime green")#canvasの設定
@@ -87,17 +95,15 @@ class Start(tk.Tk):
         self.board.label1.place(x=300,y=450)
        
         #デバッグ用ボタン
-        self.board.btn1=tk.Button(text='配列',command=self.btn_click1)
+        self.board.btn1=tk.Button(text='盤面情報',command=self.btn_click1)
         self.board.btn2=tk.Button(text='合法手',command=self.btn_click2)
         self.board.btn3=tk.Button(text='パス',command=self.btn_click3)
         self.board.btn4=tk.Button(text='投了',command=self.btn_click4)
-        self.board.btn5=tk.Button(text='ボタン',command=self.btn_click5)
 
         self.board.btn1.pack(side='left')
         self.board.btn2.pack(side='left')
         self.board.btn3.pack(side='left')
         self.board.btn4.pack(side='left')
-        self.board.btn5.pack(side='left')
 
         self.board.bind('<ButtonPress-1>',self.get_coordinate)#左クリック
        
@@ -152,57 +158,81 @@ class Start(tk.Tk):
         
         #もしクリックした場所が盤内なら
         if currentMasu in self.gameRecodeKeys:
-            print(self.gameRecodeKeys.index(currentMasu))
-            print(self.gameRecode.get(currentMasu))
-            if self.gameRecode.get(currentMasu)=='None':
-                print('石はありません')
-                #合法手か確認する
-                #合法手であれば、クリックした場所に石を置く
-                print('置く場所:'+currentMasu)
-                sIndex=self.gameRecodeKeys.index(currentMasu)
-                #石を描写する
-                if self.teban == "黒":                    
-                    self.board.create_oval(self.stoneCoordinate[sIndex][0],self.stoneCoordinate[sIndex][1],
-                                           self.stoneCoordinate[sIndex][2],self.stoneCoordinate[sIndex][3],fill="black")
-                    self.gameRecode[currentMasu]="black"#ゲーム記録も更新する
+            # print(self.gameRecodeKeys.index(currentMasu))
+            # print(self.gameRecode.get(currentMasu))
+            if self.gameRecode.get(currentMasu)=='None':#石がないマスなら
+                self.checkGouhousyu()#合法手確認
+                #合法手であれば
+                if currentMasu in self.gouhousyuArray:
+                    sIndex=self.gameRecodeKeys.index(currentMasu)
+                    #クリックした場所に石を描写する
+                    if self.teban == "黒":                    
+                        self.board.create_oval(self.stoneCoordinate[sIndex][0],self.stoneCoordinate[sIndex][1],
+                                               self.stoneCoordinate[sIndex][2],self.stoneCoordinate[sIndex][3],fill="black")
+                        self.gameRecode[currentMasu]="black"#ゲーム記録も更新する
+                    else:
+                        self.board.create_oval(self.stoneCoordinate[sIndex][0],self.stoneCoordinate[sIndex][1],
+                                               self.stoneCoordinate[sIndex][2],self.stoneCoordinate[sIndex][3],fill="white")
+                        self.gameRecode[currentMasu]="white"#ゲーム記録も更新する
+                    self.tebanChange()
                 else:
-                    self.board.create_oval(self.stoneCoordinate[sIndex][0],self.stoneCoordinate[sIndex][1],
-                                           self.stoneCoordinate[sIndex][2],self.stoneCoordinate[sIndex][3],fill="white")
-                    self.gameRecode[currentMasu]="white"#ゲーム記録も更新する
-                
-                
+                    print('合法手でありません')
+                    self.gouhousyuArray.clear()#合法手配列のリセット
+                    return#リセット
+
+    #合法手確認
+    def checkGouhousyu(self):
+        #tagetMasu:合法手確認の対象のマス
+        for tagetMasu in self.gameRecodeKeys:
+            if self.gameRecode.get(tagetMasu)!='None':
+                continue#合法手確認の対象のマスに石があれば抜ける
             else:
-                print('石があります')
-                #リセット
-        self.tebanChange()
-        print(list(self.gameRecode.values()))
-        
-  
-    def btn_click1(self):
-        print(self.xxx)
-        self.xxx='bbb'
+                #合法手確認の対象のマスに石がないならば合法手確認する
+                tagetDan=int(tagetMasu[1:2])#二文字目の段の切り出し
+                tagetSuji=int(tagetMasu[3:4])#四文字目の段の切り出し
+                for trblIndex in range(len(self.checkTRBL)):
+                    self.existRivalStoneFlg=False#ライバルの石が間に存在しないフラグをFalseにする
+                    checkDan=tagetDan
+                    checkSuji=tagetSuji                    
+                    while True:#確認マスを一マスづつ伸ばし合法手確認をする
+                        checkDan+=self.checkTRBL_Coordinate[trblIndex][0]
+                        checkSuji+=self.checkTRBL_Coordinate[trblIndex][1]
+                        checkMasu='d'+str(checkDan)+'s'+str(checkSuji)
+                        if checkDan==0 or checkSuji==0 or checkDan==9 or checkSuji==9:
+                            break#盤外であれば抜ける
+                        #盤内であれば
+                        #黒の手番なら
+                        if self.teban=='黒':
+                           if self.gameRecode[checkMasu]=='None':
+                              break#一マス先に石がなければ抜ける
+                           elif self.existRivalStoneFlg==False and self.gameRecode[checkMasu]=='black':
+                              break#ライバルの石が間にない＆一マス先が黒石ならぬける
+                           elif self.gameRecode[checkMasu]=='white':
+                              self.existRivalStoneFlg=True
+                              continue#マスの確認方向を一マス伸ばし処理を続ける
+                           elif self.existRivalStoneFlg==True and self.gameRecode[checkMasu]=='black':
+                               self.gouhousyuArray.append(tagetMasu)#合法手を配列に格納
+                               self.existRivalStoneFlg=False#フラグをFalseに戻す
+                               break#ループを抜ける
+                        #白の手番なら
+                        elif self.teban=='白':
+                           if self.gameRecode[checkMasu]=='None':
+                              break#一マス先に石がなければ抜ける
+                           elif self.existRivalStoneFlg==False and self.gameRecode[checkMasu]=='white':
+                              break#ライバルの石が間にない＆一マス先が白石ならぬける
+                           elif self.gameRecode[checkMasu]=='black':
+                              self.existRivalStoneFlg=True
+                              continue#マスの確認方向を一マス伸ばし処理を続ける
+                           elif self.existRivalStoneFlg==True and self.gameRecode[checkMasu]=='white':
+                               self.gouhousyuArray.append(tagetMasu)#合法手を配列に格納
+                               self.existRivalStoneFlg=False#フラグをFalseに戻す
+                               break#ループを抜ける
     
-    def btn_click2(self):
-        print(self.xxx)
-        self.xxx='ccc'
-
-    def btn_click3(self):
-        print("パス")
-
-    def btn_click4(self):
-        print("投了")
-
-    def btn_click5(self):
-        self.blackNum=5
-        self.whiteNum=5
-        self.bWText.set("黒："+str(self.blackNum)+" 白："+str(self.whiteNum))
-        
-
-
     def tebanChange(self):
+        self.gouhousyuArray.clear()#合法手配列のリセット
         if self.teban == "黒":
            self.teban = "白"
-        else:
+        elif self.teban == "白":
             self.teban = "黒" 
         print(self.teban)
         self.tebanText.set(self.teban+"の手番です")
@@ -215,7 +245,22 @@ class Start(tk.Tk):
             elif stone=='white':
                self.whiteNum+=1
         self.bWText.set("黒："+str(self.blackNum)+" 白："+str(self.whiteNum))  
-   
+        
+    def btn_click1(self):
+        print(list(self.gameRecode.values()))#盤面情報
+    
+    def btn_click2(self):
+        self.gouhousyuArray.clear()#合法手配列のリセット
+        self.checkGouhousyu()#合法手確認
+        print(self.gouhousyuArray)#合法手
+        self.gouhousyuArray.clear()#合法手配列のリセット
+
+    def btn_click3(self):
+        print("パス")
+
+    def btn_click4(self):
+        print("投了")
+    
     def run(self):
         self.mainloop()
  
