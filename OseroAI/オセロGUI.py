@@ -5,7 +5,6 @@ Created on Sun Apr 19 22:08:02 2020
 @author: barosan
 """
 import tkinter as tk
-import testDesu
  
 class Osero(tk.Tk):
     def __init__(self):
@@ -413,10 +412,6 @@ class Test():
         print("test")
  
 if __name__=="__main__":
-    testDesu.test()
-    # test=Test()
-    # test.testPrint()
-    # osero=Osero()
-    # osero.run()
+    osero=Osero()
+    osero.run()
 
-        
