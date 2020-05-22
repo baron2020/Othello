@@ -404,13 +404,7 @@ class Osero(tk.Tk):
     #実行
     def run(self):
         self.mainloop()
-        
-class Test():
-    def __init__(self):
-        pass
-    def testPrint(self):
-        print("test")
- 
+
 if __name__=="__main__":
     osero=Osero()
     osero.run()
