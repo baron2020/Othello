@@ -5,7 +5,12 @@ Created on Sun Apr 19 22:08:02 2020
 @author: barosan
 """
 import tkinter as tk
- 
+import modeChoice as mc
+import random
+import time
+
+modeChoice=-1#モード 0:PP 1:PAI 2:AIAI
+
 class Osero(tk.Tk):
     def __init__(self):
         super(Osero,self).__init__()
@@ -121,6 +126,8 @@ class Osero(tk.Tk):
     #クリックでスタート 
     def clickStart(self,event):
         self.setGouhousyuArray()#合法手生成
+        if modeChoice==2: #もしAI対AIなら
+            print('AI対AI')
         #合法手がなければパスを進言する
         if len(self.gouhousyuArray)==0:
             tk.messagebox.showinfo('showinfo','合法手はありません。\nパスしてください。')#タイトル,メッセージ内容
@@ -192,12 +199,32 @@ class Osero(tk.Tk):
                         self.changeTeban()#手番交代
                         self.gouhousyuArray.clear()#合法手配列のリセット
                         self.turnOverStoneArray.clear()#反転対象配列のリセット
-                        return
                     else:
                         print('合法手でありません')
                         self.gouhousyuArray.clear()#合法手配列のリセット
                         self.turnOverStoneArray.clear()#反転対象配列のリセット
                         return#リセット
+        
+        if modeChoice==1 and self.teban=='白' and self.endFlg==False:#もしP対AI＆白&勝敗が着いていない
+            self.setGouhousyuArray()#AIの合法手生成
+            randomAI=random.choice(self.gouhousyuArray)#ランダムな着手
+            # time.sleep(1)#x秒停止する
+            print(self.gouhousyuArray)
+            print(random.choice(self.gouhousyuArray))
+            rIndex=self.gameRecodeKeys.index(randomAI)#配列の何番目に存在するか？
+            #AIの着手石を描写する
+            self.board.create_oval(self.stoneCoordinate[rIndex][0],self.stoneCoordinate[rIndex][1],
+                                   self.stoneCoordinate[rIndex][2],self.stoneCoordinate[rIndex][3],fill=self.useWhiteArray[0],tag="stone")#[0]:自石
+            self.gameRecode[randomAI]=self.useWhiteArray[0]#ゲーム記録も更新する
+            self.turnOverStone(randomAI)#反転動作
+            self.checkStoneNum()#石の数の確認,更新
+            self.winLoseJudgment()#勝敗判定
+            if self.endFlg==True:#勝敗がついた
+                return
+            self.changeTeban()#手番交代
+            self.gouhousyuArray.clear()#合法手配列のリセット
+            self.turnOverStoneArray.clear()#反転対象配列のリセット
+        return#リセット
 
     #合法手生成
     def setGouhousyuArray(self):
@@ -379,14 +406,14 @@ class Osero(tk.Tk):
     def btnBackStart(self):
         self.board.delete("stone")#石の削除
         self.gameRecode={'d1s1':'None','d1s2':'None','d1s3':'None','d1s4':'None','d1s5':'None','d1s6':'None','d1s7':'None','d1s8':'None',
-                         'd2s1':'None','d2s2':'None','d2s3':'None','d2s4':'None','d2s5':'None','d2s6':'None','d2s7':'None','d2s8':'None',
-                         'd3s1':'None','d3s2':'None','d3s3':'None','d3s4':'None','d3s5':'None','d3s6':'None','d3s7':'None','d3s8':'None',
-                         'd4s1':'None','d4s2':'None','d4s3':'None','d4s4':'white','d4s5':'black','d4s6':'None','d4s7':'None','d4s8':'None',
-                         'd5s1':'None','d5s2':'None','d5s3':'None','d5s4':'black','d5s5':'white','d5s6':'None','d5s7':'None','d5s8':'None',
-                         'd6s1':'None','d6s2':'None','d6s3':'None','d6s4':'None','d6s5':'None','d6s6':'None','d6s7':'None','d6s8':'None',
-                         'd7s1':'None','d7s2':'None','d7s3':'None','d7s4':'None','d7s5':'None','d7s6':'None','d7s7':'None','d7s8':'None',
-                         'd8s1':'None','d8s2':'None','d8s3':'None','d8s4':'None','d8s5':'None','d8s6':'None','d8s7':'None','d8s8':'None'
-                         }
+                          'd2s1':'None','d2s2':'None','d2s3':'None','d2s4':'None','d2s5':'None','d2s6':'None','d2s7':'None','d2s8':'None',
+                          'd3s1':'None','d3s2':'None','d3s3':'None','d3s4':'None','d3s5':'None','d3s6':'None','d3s7':'None','d3s8':'None',
+                          'd4s1':'None','d4s2':'None','d4s3':'None','d4s4':'white','d4s5':'black','d4s6':'None','d4s7':'None','d4s8':'None',
+                          'd5s1':'None','d5s2':'None','d5s3':'None','d5s4':'black','d5s5':'white','d5s6':'None','d5s7':'None','d5s8':'None',
+                          'd6s1':'None','d6s2':'None','d6s3':'None','d6s4':'None','d6s5':'None','d6s6':'None','d6s7':'None','d6s8':'None',
+                          'd7s1':'None','d7s2':'None','d7s3':'None','d7s4':'None','d7s5':'None','d7s6':'None','d7s7':'None','d7s8':'None',
+                          'd8s1':'None','d8s2':'None','d8s3':'None','d8s4':'None','d8s5':'None','d8s6':'None','d8s7':'None','d8s8':'None'
+                          }
         self.board.create_oval(161,161,209,209,fill="white",tag="stone")            
         self.board.create_oval(211,161,259,209,fill="black",tag="stone")          
         self.board.create_oval(161,211,209,259,fill="black",tag="stone")
@@ -401,11 +428,26 @@ class Osero(tk.Tk):
         self.gouhousyuArray.clear()#合法手配列のリセット
         self.turnOverStoneArray.clear()#反転対象配列のリセット
     
+    #ウィンドウを閉じて終了する
+    def closeWindow(self):
+        self.destroy()#ウィンドウを閉じる
+    
     #実行
     def run(self):
         self.mainloop()
+        
+class Test():
+    def __init__(self):
+        pass
+    def testPrint(self):
+        print("test")
  
 if __name__=="__main__":
+    mc=mc.ModeChoice()
+    mc.run()
+    mc.returnMode()
+    modeChoice=mc.returnMode()
+    if modeChoice!=-1:
         osero=Osero()
         osero.run()
 
