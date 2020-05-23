@@ -10,7 +10,7 @@ import tkinter as tk
 class ModeChoice(tk.Tk):
     def __init__(self):
         super(ModeChoice,self).__init__()
-        self.title('モード')#タイトル
+        self.title('モード選択')#タイトル
         self.mode=-1#モード 0:PP 1:PAI 2:AIAI
         self.geometry("{}x{}+{}+{}".format(215, 215, 600, 125))#(サイズw,h,メインウィンドウの立ち上がり位置x,y)
         self.resizable(width=0,height=0)#メインウィンドウの拡大・縮小禁止
@@ -20,8 +20,7 @@ class ModeChoice(tk.Tk):
         self.aisatuText.set("\nよろしくお願いします(*_ _)\n\n対局モードを選択してください。")
         #ボタン,ラジオボタンの生成,配置
         self.createBotton()
-       
-   
+    
     #盤面生成
     def createBotton(self):
         #ラジオボタンの生成,配置

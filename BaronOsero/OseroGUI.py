@@ -4,10 +4,10 @@ Created on Sun Apr 19 22:08:02 2020
     
 @author: barosan
 """
-import tkinter as tk
+
 import modeChoice as mc
-import random
-import time
+import AI
+import tkinter as tk
 
 modeChoice=-1#モード 0:PP 1:PAI 2:AIAI
 
@@ -109,13 +109,11 @@ class Osero(tk.Tk):
         self.board.label1=tk.Label(textvariable=self.bWText)#黒,白の石の数
         self.board.label1.place(x=320,y=450)
         #イベントボタン
-        self.board.btnGameRecode=tk.Button(text='盤面',command=self.btnGameRecode)
         self.board.btnGouhousyu=tk.Button(text='合法手',command=self.btnGouhousyu)
         self.board.btnPass=tk.Button(text='パス',command=self.btnPass)
         self.board.btnTouryou=tk.Button(text='投了',command=self.btnTouryou)
         self.board.btnBackStart=tk.Button(text='最初に戻る',command=self.btnBackStart)
         #ボタンの配置場所
-        self.board.btnGameRecode.pack(side='left')
         self.board.btnGouhousyu.pack(side='left')
         self.board.btnPass.pack(side='left')
         self.board.btnTouryou.pack(side='left')
@@ -207,16 +205,16 @@ class Osero(tk.Tk):
         
         if modeChoice==1 and self.teban=='白' and self.endFlg==False:#もしP対AI＆白&勝敗が着いていない
             self.setGouhousyuArray()#AIの合法手生成
-            randomAI=random.choice(self.gouhousyuArray)#ランダムな着手
-            # time.sleep(1)#x秒停止する
-            print(self.gouhousyuArray)
-            print(random.choice(self.gouhousyuArray))
-            rIndex=self.gameRecodeKeys.index(randomAI)#配列の何番目に存在するか？
+            ai=AI.OseroAi()  
+            randomAi=ai.weak(self.gouhousyuArray)#ランダムな着手
+            # print(self.gouhousyuArray)
+            print("ランダム着手"+randomAi)
+            rIndex=self.gameRecodeKeys.index(randomAi)#配列の何番目に存在するか？
             #AIの着手石を描写する
             self.board.create_oval(self.stoneCoordinate[rIndex][0],self.stoneCoordinate[rIndex][1],
                                    self.stoneCoordinate[rIndex][2],self.stoneCoordinate[rIndex][3],fill=self.useWhiteArray[0],tag="stone")#[0]:自石
-            self.gameRecode[randomAI]=self.useWhiteArray[0]#ゲーム記録も更新する
-            self.turnOverStone(randomAI)#反転動作
+            self.gameRecode[randomAi]=self.useWhiteArray[0]#ゲーム記録も更新する
+            self.turnOverStone(randomAi)#反転動作
             self.checkStoneNum()#石の数の確認,更新
             self.winLoseJudgment()#勝敗判定
             if self.endFlg==True:#勝敗がついた
@@ -295,8 +293,8 @@ class Osero(tk.Tk):
                     self.turnOverStoneArray.append(checkMasu)#反転対象の石が置かれているマスを配列に格納する
                     continue#マスの確認方向を一マス伸ばし処理を続ける
                 if self.turnOverFlg==True and self.gameRecode[checkMasu]==switchArray[0]:#[0]:自石
-                    print('反転対象配列')
-                    print(self.turnOverStoneArray)
+                    # print('反転対象配列')
+                    # print(self.turnOverStoneArray)
                     #配列をもとに反転させる
                     for i in self.turnOverStoneArray:
                         sIndex=self.gameRecodeKeys.index(i)#配列の何番目に存在するか？
@@ -354,25 +352,6 @@ class Osero(tk.Tk):
                 print("白の勝ちです")
             self.endFlg=True
             return
-        
-    #盤面情報確認ボタンイベント    
-    def btnGameRecode(self):
-        print(self.gameRecode)#盤面情報
-        disp=''
-        gameRecodeValues=[]
-        for value in self.gameRecode.values():
-            if value=='None':
-               value='ー'
-            if value=='black':
-               value='黒'
-            if value=='white':
-               value='白'   
-            gameRecodeValues.append(value)  
-        for i in range(len(gameRecodeValues)):
-            disp+=self.kihu[i]+':'+gameRecodeValues[i]+' '
-            if i==7 or i==15 or i==23 or i==31 or i==39 or i==47 or i==55:
-                disp+='\n'
-        tk.messagebox.showinfo('showinfo',disp)#盤面配列の表示
         
     #合法手確認ボタンイベント    
     def btnGouhousyu(self):
@@ -435,12 +414,6 @@ class Osero(tk.Tk):
     #実行
     def run(self):
         self.mainloop()
-        
-class Test():
-    def __init__(self):
-        pass
-    def testPrint(self):
-        print("test")
  
 if __name__=="__main__":
     mc=mc.ModeChoice()
@@ -450,5 +423,6 @@ if __name__=="__main__":
     if modeChoice!=-1:
         osero=Osero()
         osero.run()
+        
 
         
