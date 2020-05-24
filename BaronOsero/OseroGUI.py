@@ -5,11 +5,10 @@ Created on Sun Apr 19 22:08:02 2020
 @author: barosan
 """
 
-import modeChoice as mc
 import AI
 import tkinter as tk
 
-modeChoice=-1#モード 0:PP 1:PAI 2:AIAI
+modeChoice=1#モード 0:PP 1:PAI 2:AIAI
 
 class Osero(tk.Tk):
     def __init__(self):
@@ -414,15 +413,5 @@ class Osero(tk.Tk):
     #実行
     def run(self):
         self.mainloop()
- 
-if __name__=="__main__":
-    mc=mc.ModeChoice()
-    mc.run()
-    mc.returnMode()
-    modeChoice=mc.returnMode()
-    if modeChoice!=-1:
-        osero=Osero()
-        osero.run()
-        
 
         
