@@ -5,14 +5,14 @@ Created on Sun Apr 19 22:08:02 2020
 @author: barosan
 """
 
+import ModeChoice
 import AI
 import tkinter as tk
 
-modeChoice=1#モード 0:PP 1:PAI 2:AIAI
-
-class Osero(tk.Tk):
-    def __init__(self):
-        super(Osero,self).__init__()
+class OseroGUI(tk.Tk):
+    def __init__(self,mode):
+        super(OseroGUI,self).__init__()
+        self.mode=mode#モード 0:PP 1:PAI 2:AIAI
         self.title('オセロ')#タイトル
         self.geometry("{}x{}+{}+{}".format(420, 500, 550, 25))#(サイズw,h,メインウィンドウの立ち上がり位置x,y)
         self.resizable(width=0,height=0)#メインウィンドウの拡大・縮小禁止
@@ -123,7 +123,7 @@ class Osero(tk.Tk):
     #クリックでスタート 
     def clickStart(self,event):
         self.setGouhousyuArray()#合法手生成
-        if modeChoice==2: #もしAI対AIなら
+        if self.mode==2: #もしAI対AIなら
             print('AI対AI')
         #合法手がなければパスを進言する
         if len(self.gouhousyuArray)==0:
@@ -202,9 +202,9 @@ class Osero(tk.Tk):
                         self.turnOverStoneArray.clear()#反転対象配列のリセット
                         return#リセット
         
-        if modeChoice==1 and self.teban=='白' and self.endFlg==False:#もしP対AI＆白&勝敗が着いていない
+        if self.mode==1 and self.teban=='白' and self.endFlg==False:#もしP対AI＆白&勝敗が着いていない
             self.setGouhousyuArray()#AIの合法手生成
-            ai=AI.OseroAi()  
+            ai=AI.AI()  
             randomAi=ai.weak(self.gouhousyuArray)#ランダムな着手
             # print(self.gouhousyuArray)
             print("ランダム着手"+randomAi)

@@ -41,7 +41,7 @@ class ModeChoice(tk.Tk):
         if res==True:
             self.mode=labelIndex#モード 0:PP 1:PAI 2:AIAI
             self.destroy()#ウィンドウを閉じる
-            return 
+            return
     
     #モードを返す
     def returnMode(self):
