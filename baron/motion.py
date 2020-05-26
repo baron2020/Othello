@@ -4,15 +4,14 @@ Created on Sun May 24 21:31:26 2020
 
 @author: barosan
 """
-import ModeChoice
-import OseroGUI
-import AI
+import mode
+import gui
+import ai
 
 if __name__=="__main__":
-    mc=ModeChoice.ModeChoice()
+    mc=mode.ModeChoice()
     mc.run()
-    mode=mc.returnMode()
-    if mode!=-1:
-        og=OseroGUI.OseroGUI(mode)
+    mode_choice=mc.return_mode()
+    if mode_choice!=-1:
+        og=gui.OseroGui(mode_choice)
         og.run()
-        
