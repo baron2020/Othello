@@ -13,7 +13,7 @@ class OseroGui(tk.Tk):
         super(OseroGui,self).__init__()
         self.mode=mode#モード 0:PP 1:PAI 2:AIAI
         self.title('オセロ')#タイトル
-        self.geometry("{}x{}+{}+{}".format(420, 500, 550, 25))#(サイズw,h,メインウィンドウの立ち上がり位置x,y)
+        self.geometry("{}x{}+{}+{}".format(420, 500, 670, 60))#(サイズw,h,メインウィンドウの立ち上がり位置x,y)
         self.resizable(width=0,height=0)#メインウィンドウの拡大・縮小禁止
         #盤面情報
         self.game_recode={'d1s1':'None','d1s2':'None','d1s3':'None','d1s4':'None','d1s5':'None','d1s6':'None','d1s7':'None','d1s8':'None',
@@ -104,18 +104,18 @@ class OseroGui(tk.Tk):
         self.board.create_oval(211,211,259,259,fill="white",tag="stone")
         #ラベル
         self.board.teban=tk.Label(textvariable=self.teban_text)#手番
-        self.board.teban.place(x=230,y=450)
+        self.board.teban.place(x=280,y=435)
         self.board.bw=tk.Label(textvariable=self.bw_text)#黒,白の石の数
-        self.board.bw.place(x=320,y=450)
+        self.board.bw.place(x=280,y=465)
         #イベントボタン
         self.board.btn_gouhousyu=tk.Button(text='合法手',command=self.btn_gouhousyu)
         self.board.btn_pass=tk.Button(text='パス',command=self.btn_pass)
         self.board.btn_touryou=tk.Button(text='投了',command=self.btn_touryou)
         self.board.btn_back_start=tk.Button(text='最初に戻る',command=self.btn_back_start)
         #ボタンの配置場所
-        self.board.btn_gouhousyu.pack(side='left')
+        self.board.btn_gouhousyu.pack(padx=15,side='left')
         self.board.btn_pass.pack(side='left')
-        self.board.btn_touryou.pack(side='left')
+        self.board.btn_touryou.pack(padx=15,side='left')
         self.board.btn_back_start.pack(side='left')
         #イベント設定
         self.board.bind('<ButtonPress-1>',self.click_start)#左クリック
@@ -124,17 +124,24 @@ class OseroGui(tk.Tk):
         """
         クリックでスタートした時の処理。
         """
-        self.set_gouhousyu_array()#合法手生成
+        if self.end_flg==True:#勝敗が着いている    
+            return
+        
         if self.mode==2: #もしAI対AIなら
             print('AI対AI')
-        #合法手がなければパスを進言する
-        if len(self.gouhousyu_array)==0:
-            tk.messagebox.showinfo('showinfo','合法手はありません。\nパスしてください。')#タイトル,メッセージ内容
+            # while self.end_flg==False:#勝敗が着いていないなら
+            self.ai_tyakusyu()#AIの着手処理
             return
+        
         if self.teban=='黒':
             switch_array=self.use_black_array
         elif self.teban=='白':
             switch_array=self.use_white_array
+        self.set_gouhousyu_array()#合法手生成
+        #合法手がなければパスを進言する
+        if len(self.gouhousyu_array)==0:
+            tk.messagebox.showinfo('showinfo','合法手はありません。\nパスしてください。')#タイトル,メッセージ内容
+            return
         print('x:'+str(event.x))
         print('y:'+str(event.y))        
         if event.x > 10 and event.x < 60:
@@ -205,33 +212,42 @@ class OseroGui(tk.Tk):
                         return#リセット
         
         if self.mode==1 and self.teban=='白' and self.end_flg==False:#もしP対AI＆白&勝敗が着いていない
-            self.set_gouhousyu_array()#AIの合法手生成
-            if len(self.gouhousyu_array)==0:
-                print('パスします。')
-                tk.messagebox.showinfo('showinfo','合法手はありません。パスします。')#パス
-                self.change_teban()
-                self.gouhousyu_array.clear()#合法手配列のリセット
-                return
-            osero_ai=ai.OseroAi()  
-            random_ai=osero_ai.weak(self.gouhousyu_array)#ランダムな着手
-            # print(self.gouhousyu_array)
-            print("ランダム着手"+random_ai)
-            key_index=self.game_recode_keys.index(random_ai)#配列の何番目に存在するか？
-            #AIの着手石を描写する
-            self.board.create_oval(self.stone_coordinate[key_index][0],self.stone_coordinate[key_index][1],
-                                   self.stone_coordinate[key_index][2],self.stone_coordinate[key_index][3],fill=self.use_white_array[0],tag="stone")#[0]:自石
-            self.game_recode[random_ai]=self.use_white_array[0]#ゲーム記録も更新する
-            self.turn_over_stone(random_ai)#反転動作
-            self.check_stone_num()#石の数の確認,更新
-            self.win_lose_judgment()#勝敗判定
-            if self.end_flg==True:#勝敗がついた
-                return
-            self.change_teban()#手番交代
-            self.gouhousyu_array.clear()#合法手配列のリセット
-            self.turn_over_stone_array.clear()#反転対象配列のリセット
+            self.ai_tyakusyu()#AIの着手処理
         return#リセット
 
-   
+    def ai_tyakusyu(self):
+        """
+        AIの着手する際の処理。
+        """
+        if self.teban=='黒':
+            switch_array=self.use_black_array
+        elif self.teban=='白':
+            switch_array=self.use_white_array
+        self.set_gouhousyu_array()#AIの合法手生成
+        if len(self.gouhousyu_array)==0:
+            print('パスします。')
+            tk.messagebox.showinfo('showinfo','合法手はありません。パスします。')#パス
+            self.change_teban()
+            self.gouhousyu_array.clear()#合法手配列のリセット
+            return
+        osero_ai=ai.OseroAi()  
+        random_ai=osero_ai.weak(self.gouhousyu_array)#ランダムな着手
+        # print(self.gouhousyu_array)
+        print("ランダム着手"+random_ai)
+        key_index=self.game_recode_keys.index(random_ai)#配列の何番目に存在するか？
+        #AIの着手石を描写する
+        self.board.create_oval(self.stone_coordinate[key_index][0],self.stone_coordinate[key_index][1],
+                               self.stone_coordinate[key_index][2],self.stone_coordinate[key_index][3],fill=switch_array[0],tag="stone")#[0]:自石
+        self.game_recode[random_ai]=switch_array[0]#ゲーム記録も更新する
+        self.turn_over_stone(random_ai)#反転動作
+        self.check_stone_num()#石の数の確認,更新
+        self.win_lose_judgment()#勝敗判定
+        if self.end_flg==True:#勝敗がついた
+           return
+        self.change_teban()#手番交代
+        self.gouhousyu_array.clear()#合法手配列のリセット
+        self.turn_over_stone_array.clear()#反転対象配列のリセット
+        
     def set_gouhousyu_array(self):
         """
          手番の合法手を生成する。
@@ -375,10 +391,7 @@ class OseroGui(tk.Tk):
                 self.teban_text.set("引き分けです")
             self.end_flg=True
             return
-        
-    def ai_tyakusyu(self):
-        print(1)
-    
+
     def btn_gouhousyu(self):
         """
         合法手確認ボタンが押された時に、合法手を表示する。
@@ -442,5 +455,3 @@ class OseroGui(tk.Tk):
     #実行
     def run(self):
         self.mainloop()
-
-        

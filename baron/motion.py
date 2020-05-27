@@ -6,7 +6,6 @@ Created on Sun May 24 21:31:26 2020
 """
 import mode
 import gui
-import ai
 
 if __name__=="__main__":
     mc=mode.ModeChoice()
