@@ -17,7 +17,7 @@ class ModeChoice(tk.Tk):
         self.radio_label_array=['Player (黒)  対  Player (白)','Player (黒)  対  AI (白)','AI (黒)  対  AI (白)']
         self.aisatu_text=tk.StringVar()
         self.radio_choice=tk.IntVar()#どのラジオボタンを選択しているか？
-        self.aisatu_text.set("\nよろしくお願いします(*_ _)\n\n対局モードを選択してください。")
+        self.aisatu_text.set("白黒つけたい、あなたへ〇\n\nよろしくお願いします(*_ _)\n\n対局モードを選択してください。")
         #ボタン,ラジオボタンの生成,配置
         self.create_botton()
     
@@ -26,11 +26,11 @@ class ModeChoice(tk.Tk):
         #ラジオボタンの生成,配置
         for i in range(len(self.radio_label_array)):
             create_radio_button=tk.Radiobutton(text=self.radio_label_array[i],variable=self.radio_choice,value=i)
-            create_radio_button.place(x=0,y=75+(i*35))
+            create_radio_button.place(x=75,y=120+(i*40))
         self.aisatu_disp=tk.Label(textvariable=self.aisatu_text)
         self.btn=tk.Button(text='OK?',command=self.btn_click)
-        self.aisatu_disp.place(x=0,y=0)
-        self.btn.place(x=0,y=180)
+        self.aisatu_disp.place(x=75,y=20)
+        self.btn.place(x=75,y=240)
     
     #ボタンクリック
     def btn_click(self):

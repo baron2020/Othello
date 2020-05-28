@@ -232,7 +232,6 @@ class OseroGui(tk.Tk):
             return
         osero_ai=ai.OseroAi()  
         random_ai=osero_ai.weak(self.gouhousyu_array)#ランダムな着手
-        # print(self.gouhousyu_array)
         print("ランダム着手"+random_ai)
         key_index=self.game_recode_keys.index(random_ai)#配列の何番目に存在するか？
         #AIの着手石を描写する
