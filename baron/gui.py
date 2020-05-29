@@ -130,7 +130,7 @@ class OseroGui(tk.Tk):
         if self.mode==2: #もしAI対AIなら
             print('AI対AI')
             # while self.end_flg==False:#勝敗が着いていないなら
-            self.ai_tyakusyu()#AIの着手処理
+            self.board.after(1000,self.ai_tyakusyu)#AIの着手処理(1秒待機した後に着手する)
             return
         
         if self.teban=='黒':
@@ -212,7 +212,8 @@ class OseroGui(tk.Tk):
                         return#リセット
         
         if self.mode==1 and self.teban=='白' and self.end_flg==False:#もしP対AI＆白&勝敗が着いていない
-            self.ai_tyakusyu()#AIの着手処理
+            self.board.after(1000,self.ai_tyakusyu)#AIの着手処理(1秒待機した後に着手する)
+            # self.ai_tyakusyu()#AIの着手処理
         return#リセット
 
     def ai_tyakusyu(self):
@@ -450,6 +451,9 @@ class OseroGui(tk.Tk):
     #ウィンドウを閉じて終了する
     def close_window(self):
         self.destroy()#ウィンドウを閉じる
+    
+    def test(self):
+        print("待機テスト")
     
     #実行
     def run(self):
