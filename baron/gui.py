@@ -126,13 +126,16 @@ class OseroGui(tk.Tk):
         """
         if self.end_flg==True:#勝敗が着いている    
             return
-        
         if self.mode==2: #もしAI対AIなら
             print('AI対AI')
-            # while self.end_flg==False:#勝敗が着いていないなら
-            self.board.after(1000,self.ai_tyakusyu)#AIの着手処理(1秒待機した後に着手する)
+            start_time=0
+            for i in range(10):    
+                if self.end_flg==False:
+                    start_time+=1500
+                    self.board.after(start_time,self.ai_tyakusyu)#AIの着手処理            
+                if self.end_flg==True:    
+                    break
             return
-        
         if self.teban=='黒':
             switch_array=self.use_black_array
         elif self.teban=='白':
@@ -212,7 +215,7 @@ class OseroGui(tk.Tk):
                         return#リセット
         
         if self.mode==1 and self.teban=='白' and self.end_flg==False:#もしP対AI＆白&勝敗が着いていない
-            self.board.after(1000,self.ai_tyakusyu)#AIの着手処理(1秒待機した後に着手する)
+            self.board.after(1500,self.ai_tyakusyu)#AIの着手処理(1秒待機した後に着手する)
             # self.ai_tyakusyu()#AIの着手処理
         return#リセット
 
