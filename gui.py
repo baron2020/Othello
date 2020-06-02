@@ -6,9 +6,9 @@ Created on Sun Apr 19 22:08:02 2020
 """
 import tkinter as tk
  
-class Osero(tk.Tk):
+class Othello(tk.Tk):
     def __init__(self):
-        super(Osero,self).__init__()
+        super(Othello,self).__init__()
         self.title('オセロ')#タイトル
         self.geometry("{}x{}+{}+{}".format(420, 500, 550, 25))#(サイズw,h,メインウィンドウの立ち上がり位置x,y)
         self.resizable(width=0,height=0)#メインウィンドウの拡大・縮小禁止
@@ -406,6 +406,6 @@ class Osero(tk.Tk):
         self.mainloop()
 
 if __name__=="__main__":
-    osero=Osero()
-    osero.run()
+    othello=Othello()
+    othello.run()
 
