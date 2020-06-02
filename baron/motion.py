@@ -12,5 +12,5 @@ if __name__=="__main__":
     mc.run()
     mode_choice=mc.return_mode()
     if mode_choice!=-1:
-        og=gui.OseroGui(mode_choice)
+        og=gui.OtelloGui(mode_choice)
         og.run()

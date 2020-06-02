@@ -8,9 +8,9 @@ Created on Sun Apr 19 22:08:02 2020
 import ai
 import tkinter as tk
 
-class OseroGui(tk.Tk):
+class OtelloGui(tk.Tk):
     def __init__(self,mode):
-        super(OseroGui,self).__init__()
+        super(OtelloGui,self).__init__()
         self.mode=mode#モード 0:PP 1:PAI 2:AIAI
         self.title('オセロ')#タイトル
         self.geometry("{}x{}+{}+{}".format(420, 500, 670, 60))#(サイズw,h,メインウィンドウの立ち上がり位置x,y)
@@ -129,7 +129,7 @@ class OseroGui(tk.Tk):
         if self.mode==2: #もしAI対AIなら
             print('AI対AI')
             start_time=0
-            for i in range(10):    
+            for i in range(10):#10手指し  
                 if self.end_flg==False:
                     start_time+=1500
                     self.board.after(start_time,self.ai_tyakusyu)#AIの着手処理            
@@ -234,8 +234,8 @@ class OseroGui(tk.Tk):
             self.change_teban()
             self.gouhousyu_array.clear()#合法手配列のリセット
             return
-        osero_ai=ai.OseroAi()  
-        random_ai=osero_ai.weak(self.gouhousyu_array)#ランダムな着手
+        otello_ai=ai.OtelloAi()  
+        random_ai=otello_ai.weak(self.gouhousyu_array)#ランダムな着手
         print("ランダム着手"+random_ai)
         key_index=self.game_recode_keys.index(random_ai)#配列の何番目に存在するか？
         #AIの着手石を描写する
