@@ -5,13 +5,36 @@ Created on Wed Jun  3 21:30:11 2020
 @author: barosan
 """
 
-#評価関数
-hyouka_kannsuu={'d1s1':'None','d1s2':'None','d1s3':'None','d1s4':'None','d1s5':'None','d1s6':'None','d1s7':'None','d1s8':'None',
-             'd2s1':'None','d2s2':'None','d2s3':'None','d2s4':'None','d2s5':'None','d2s6':'None','d2s7':'None','d2s8':'None',
-             'd3s1':'None','d3s2':'None','d3s3':'None','d3s4':'None','d3s5':'None','d3s6':'None','d3s7':'None','d3s8':'None',
-             'd4s1':'None','d4s2':'None','d4s3':'None','d4s4':'white','d4s5':'black','d4s6':'None','d4s7':'None','d4s8':'None',
-             'd5s1':'None','d5s2':'None','d5s3':'None','d5s4':'black','d5s5':'white','d5s6':'None','d5s7':'None','d5s8':'None',
-             'd6s1':'None','d6s2':'None','d6s3':'None','d6s4':'None','d6s5':'None','d6s6':'None','d6s7':'None','d6s8':'None',
-             'd7s1':'None','d7s2':'None','d7s3':'None','d7s4':'None','d7s5':'None','d7s6':'None','d7s7':'None','d7s8':'None',
-             'd8s1':'None','d8s2':'None','d8s3':'None','d8s4':'None','d8s5':'None','d8s6':'None','d8s7':'None','d8s8':'None'
-             }
+import numpy as np
+import random
+
+hyouka_array=[[0]*8 for i in range(8)]#全体の評価関数
+temp_array=[]#1個の評価関数
+kansu_index=[[1,2,3,4,4,3,2,1],
+             [2,5,6,7,7,6,5,2],
+             [3,6,8,9,9,8,6,3],
+             [4,7,9,10,10,9,7,4],
+             [4,7,9,10,10,9,7,4],
+             [3,6,8,9,9,8,6,3],
+             [2,5,6,7,7,6,5,2],
+             [1,2,3,4,4,3,2,1]
+             ]
+
+for i in range(10):
+    temp_hyouka=random.randint(-150,150)
+    temp_array.append(temp_hyouka)
+
+for i in temp_array:
+    print(i)
+
+for y in range(8):
+    for x in range(8):
+       hyouka_array[y][x]=temp_array[kansu_index[y][x]-1]
+
+# print(hyouka_array)
+hyouka_np_array=np.array(hyouka_array)
+print(hyouka_np_array)
+
+s2=np.sum(hyouka_np_array)
+print(s2)
+
