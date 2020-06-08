@@ -5,6 +5,7 @@ Created on Wed Jun  3 21:30:11 2020
 @author: barosan
 """
 
+import os
 import numpy as np
 import random
 
@@ -31,10 +32,19 @@ for y in range(8):
     for x in range(8):
        hyouka_array[y][x]=temp_array[kansu_index[y][x]-1]
 
-# print(hyouka_array)
 hyouka_np_array=np.array(hyouka_array)
 print(hyouka_np_array)
+# array_sum=np.sum(hyouka_np_array)
+# print(array_sum)
 
-s2=np.sum(hyouka_np_array)
-print(s2)
+print(os.getcwd())
+file=open('評価関数/テスト/test0608.txt','w',encoding='utf-8')
+for i in hyouka_array:
+    file.write(str(i)+',\n')
+file.close()
 
+test_data=open('評価関数/テスト/test0608.txt','r',encoding='utf-8')
+data_all=test_data.read()
+print(data_all)
+
+test_data.close()
