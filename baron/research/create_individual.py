@@ -44,22 +44,34 @@ class CreateIndividual():
             writer.writerows(self.individual)#複数行の書き込み
 
     def reading_csv(self):
-        with open('research/generation1/test0610.csv','r',encoding='utf-8') as fp:
-            csv_list=list(csv.reader(fp))
+        with open('research/generation1/test0610.csv','r',encoding='utf-8') as file:
+            csv_list=list(csv.reader(file))
         print(csv_list)
         print(csv_list[3][3])
 
     def all_create_generation(self):
         print("aaa")
-        with open('research/record.csv','r',encoding='utf-8') as f:
-            generation_name=f.read()
+        with open('research/record.csv','r',encoding='utf-8') as file:
+            generation_name=file.read().strip()
         print(generation_name)
-        target_dir=os.path.join("C:/Users/barosan/Desktop/BaronOsero/research/",generation_name)
+        
+        target_dir="C:/Users/barosan/Desktop/BaronOsero/research/"+generation_name
+
         print(target_dir)
-        print(os.path.isdir(target_dir))
+        if os.path.isdir(target_dir)==False:
+            os.mkdir(target_dir)
+        else:
+            print("何もしない")
+            
+    def writing_record_csv(self,temp):
+        with open('research/record.csv','w',encoding='utf-8') as file:
+            writer=csv.writer(file)
+            writer.writerow([temp])
         
 if __name__=="__main__":
     ci=CreateIndividual()
     # ci.writing_csv()
     # ci.reading_csv()
     ci.all_create_generation()
+    ci.writing_record_csv("generation3") 
+    
