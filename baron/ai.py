@@ -15,4 +15,3 @@ class OtelloAi():
         # time.sleep(3)#x秒停止する
         random_ai=random.choice(gouhousyu_array)#ランダムな着手
         return random_ai
-

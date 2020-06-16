@@ -124,15 +124,22 @@ class OtelloGui(tk.Tk):
         """
         クリックでスタートした時の処理。
         """
+        if self.mode==3: #研究AI対AIなら
+            print("研究中")
+            print(self.game_recode)
+            print(self.teban)
+            self.set_gouhousyu_array()#合法手生成
+            print(self.gouhousyu_array)
+
         if self.end_flg==True:#勝敗が着いている    
             return
         if self.mode==2: #もしAI対AIなら
-            print('AI対AI')
+            print('AI対AIで10手進めます。')
             start_time=0
-            for i in range(10):#10手指し  
+            for i in range(10):#10手指し
                 if self.end_flg==False:
-                    start_time+=1500
-                    self.board.after(start_time,self.ai_tyakusyu)#AIの着手処理            
+                    start_time+=200
+                    self.board.after(start_time,self.ai_tyakusyu)#AIの着手処理
                 if self.end_flg==True:    
                     break
             return
@@ -145,8 +152,8 @@ class OtelloGui(tk.Tk):
         if len(self.gouhousyu_array)==0:
             tk.messagebox.showinfo('showinfo','合法手はありません。\nパスしてください。')#タイトル,メッセージ内容
             return
-        print('x:'+str(event.x))
-        print('y:'+str(event.y))        
+        # print('x:'+str(event.x))
+        # print('y:'+str(event.y))        
         if event.x > 10 and event.x < 60:
             xNum=1
         elif event.x > 60 and event.x < 110:
@@ -188,10 +195,15 @@ class OtelloGui(tk.Tk):
             current_masu='d'+str(yNum)+'s'+str(xNum)
         else:
             current_masu='盤外です'
-        print('カレントマス:'+current_masu)
+        # print('カレントマス:'+current_masu)
         if self.end_flg==False:#勝敗が着いていないなら    
             #もしクリックした場所が盤内なら
             if current_masu in self.game_recode_keys:
+                if self.game_recode.get(current_masu)=='black' or self.game_recode.get(current_masu)=='white':#石がある
+                    print('合法手ではありません')
+                    self.gouhousyu_array.clear()#合法手配列のリセット
+                    self.turn_over_stone_array.clear()#反転対象配列のリセット
+                    return#リセット
                 if self.game_recode.get(current_masu)=='None':#石がないマスなら
                     #合法手であれば
                     if current_masu in self.gouhousyu_array:
@@ -229,14 +241,14 @@ class OtelloGui(tk.Tk):
             switch_array=self.use_white_array
         self.set_gouhousyu_array()#AIの合法手生成
         if len(self.gouhousyu_array)==0:
-            print('パスします。')
-            tk.messagebox.showinfo('showinfo','合法手はありません。パスします。')#パス
+            print(self.teban+'の合法手はありません。パスします。')
+            # tk.messagebox.showinfo('showinfo','合法手はありません。パスします。')#パス
             self.change_teban()
             self.gouhousyu_array.clear()#合法手配列のリセット
             return
         otello_ai=ai.OtelloAi()  
         random_ai=otello_ai.weak(self.gouhousyu_array)#ランダムな着手
-        print("ランダム着手"+random_ai)
+        # print("ランダム着手"+random_ai)
         key_index=self.game_recode_keys.index(random_ai)#配列の何番目に存在するか？
         #AIの着手石を描写する
         self.board.create_oval(self.stone_coordinate[key_index][0],self.stone_coordinate[key_index][1],
@@ -295,7 +307,7 @@ class OtelloGui(tk.Tk):
         """
         着手した手に対して石を反転させる。
         """
-        print('起点のマス'+starting_point)
+        # print('起点のマス'+starting_point)
         if self.teban=='黒':
             switch_array=self.use_black_array
         elif self.teban=='白':
@@ -378,12 +390,12 @@ class OtelloGui(tk.Tk):
             self.end_flg=True
             return
         if 'None' in self.game_recode.values():
-            print('石の置ける場所があります')
+            # print('石の置ける場所があります')
             return
         else:
             print('石の置ける場所がありません。勝敗判定をします。')
-            print(self.black_num)
-            print(self.white_num)    
+            # print(self.black_num)
+            # print(self.white_num)    
             if self.black_num>self.white_num:#黒石＞白石
                 self.teban_text.set("黒の勝ちです")
                 print("黒の勝ちです")
@@ -392,6 +404,7 @@ class OtelloGui(tk.Tk):
                 print("白の勝ちです")
             elif self.black_num==self.white_num:#黒石＝白石
                 self.teban_text.set("引き分けです")
+                print("引き分けです")
             self.end_flg=True
             return
 
@@ -456,7 +469,7 @@ class OtelloGui(tk.Tk):
         self.destroy()#ウィンドウを閉じる
     
     def test(self):
-        print("待機テスト")
+        print("テスト")
     
     #実行
     def run(self):
