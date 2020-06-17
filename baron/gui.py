@@ -5,6 +5,7 @@ Created on Sun Apr 19 22:08:02 2020
 @author: barosan
 """
 
+from research import battle
 import ai
 import tkinter as tk
 
@@ -124,13 +125,15 @@ class OtelloGui(tk.Tk):
         """
         クリックでスタートした時の処理。
         """
-        if self.mode==3: #研究AI対AIなら
+        if self.mode==3: 
+            #研究AI対AI
             print("研究中")
-            print(self.game_recode)
-            print(self.teban)
             self.set_gouhousyu_array()#合法手生成
-            print(self.gouhousyu_array)
-
+            bt=battle.Battle(self.teban,self.game_recode,self.gouhousyu_array,1)
+            bt.test()
+            temp=bt.matome()
+            return
+            
         if self.end_flg==True:#勝敗が着いている    
             return
         if self.mode==2: #もしAI対AIなら
@@ -138,7 +141,7 @@ class OtelloGui(tk.Tk):
             start_time=0
             for i in range(10):#10手指し
                 if self.end_flg==False:
-                    start_time+=200
+                    start_time+=150
                     self.board.after(start_time,self.ai_tyakusyu)#AIの着手処理
                 if self.end_flg==True:    
                     break
@@ -227,7 +230,7 @@ class OtelloGui(tk.Tk):
                         return#リセット
         
         if self.mode==1 and self.teban=='白' and self.end_flg==False:#もしP対AI＆白&勝敗が着いていない
-            self.board.after(1500,self.ai_tyakusyu)#AIの着手処理(1秒待機した後に着手する)
+            self.board.after(400,self.ai_tyakusyu)#AIの着手処理(1秒待機した後に着手する)
             # self.ai_tyakusyu()#AIの着手処理
         return#リセット
 
@@ -300,7 +303,8 @@ class OtelloGui(tk.Tk):
                         if self.exist_rival_stone_flg==True and self.game_recode[check_masu]==switch_array[0]:#[0]:自石
                             self.gouhousyu_array.append(taget_masu)#合法手を配列に格納
                             self.exist_rival_stone_flg=False#フラグをFalseに戻す
-                            break#ループを抜ける
+                            break#ループを抜ける              
+        self.gouhousyu_array=list(set(self.gouhousyu_array))#重複の削除
 
     #石の反転
     def turn_over_stone(self,starting_point):
