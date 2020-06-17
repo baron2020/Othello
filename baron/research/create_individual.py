@@ -45,23 +45,34 @@ class CreateIndividual():
             writer.writerow([self.dt_now])#ヘッダー
             writer.writerows(self.individual)#複数行の書き込み
 
-    def reading_csv(self):
-        with open('research/generation1/test0610.csv','r',encoding='utf-8') as file:
+    def reading_csv(self,path):
+        temp_csv=path+'.csv'
+        with open('research/generation1/'+temp_csv,'r',encoding='utf-8') as file:
             csv_list=list(csv.reader(file))
         print(csv_list)
-        print(csv_list[3][3])
+        # print(csv_list[3][3])
+        return csv_list
 
-    def update_record_csv(self,temp):   
-        with open('research/record.csv','w',encoding='utf-8') as file:
-            writer=csv.writer(file)
-            writer.writerow([temp])
+    def writing_generation_txt(self,temp):   
+        with open('research/generation.txt','w',encoding='utf-8') as file:
+            file.write(temp)
 
+    def writing_random_csv(self,path):    
+        array=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+        random.shuffle(array)
+        # print(array)
+        with open(path+'/random.csv','w',encoding='utf-8') as file:
+            writer=csv.writer(file,lineterminator='\n')#改行コードの指定
+            writer.writerow(array)#複数行の書き込み
+            
     def all_create_generation(self):
-        with open('research/record.csv','r',encoding='utf-8') as file:
+        with open('research/generation.txt','r',encoding='utf-8') as file:
             generation_name=file.read().strip()
         # print(generation_name)
-        target_dir="C:/Users/barosan/Desktop/BaronOsero/research/"+generation_name
-        # print(target_dir)
+        # target_dir="C:/Users/barosan/Desktop/BaronOtello/research/"+generation_name
+        target_dir=os.getcwd()+"/research/"+generation_name
+        print(target_dir)
+        # print("パス"+os.getcwd())
         temp_head=generation_name[0:-1]
         temp_tail=generation_name[-1]
 
@@ -76,7 +87,8 @@ class CreateIndividual():
                     self.writing_csv(path)
             elif generation_name!="generation1":
                 print('2世代以降の処理')
-            self.update_record_csv(temp_head+str(int(temp_tail)+1))
+            self.writing_random_csv(target_dir)
+            # self.writing_generation_txt(temp_head+str(int(temp_tail)+1))
         else:
             print("存在するので何もしない")
 
