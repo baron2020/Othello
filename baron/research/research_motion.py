@@ -8,4 +8,4 @@ from research import create_individual
 
 if __name__=="__main__":
     ci=create_individual.CreateIndividual()
-    ci.all_create_generation()
+    ci.all_create_generation()#世代の作成,個体のランダムシャッフル,次世代に更新
