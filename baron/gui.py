@@ -85,9 +85,16 @@ class OtelloGui(tk.Tk):
         self.bw_text=tk.StringVar()
         self.teban_text.set(self.teban+"の手番です")
         self.bw_text.set("黒："+str(self.black_num)+' '+"白："+str(self.white_num))
+        #個体のランダム配列準備
+        self.kotai_jyunbi()
         #boardの描写
         self.create_board()
-        
+    
+    def kotai_jyunbi(self):
+        ra=battle.Battle(self.teban,self.game_recode,self.gouhousyu_array,100)
+        self.random_array=ra.get_random_array()
+        # temp_name=self.random_array.pop(0)
+    
     def create_board(self):
         """
         盤面を生成する。
@@ -128,10 +135,12 @@ class OtelloGui(tk.Tk):
         if self.mode==3: 
             #研究AI対AI
             print("研究中")
+            print(self.random_array)
+            
             self.set_gouhousyu_array()#合法手生成
-            bt=battle.Battle(self.teban,self.game_recode,self.gouhousyu_array,1)
-            bt.test()
-            temp=bt.matome()
+            bt=battle.Battle(self.teban,self.game_recode,self.gouhousyu_array,self.random_array[0])
+            bt.matome()
+            # print(temp)
             return
             
         if self.end_flg==True:#勝敗が着いている    
@@ -471,7 +480,7 @@ class OtelloGui(tk.Tk):
     #ウィンドウを閉じて終了する
     def close_window(self):
         self.destroy()#ウィンドウを閉じる
-    
+        
     def test(self):
         print("テスト")
     
