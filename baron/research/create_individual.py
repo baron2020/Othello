@@ -73,8 +73,8 @@ class CreateIndividual():
         target_dir=os.getcwd()+"/research/"+generation_name
         print(target_dir)
         # print("パス"+os.getcwd())
-        temp_head=generation_name[0:-1]
-        temp_tail=generation_name[-1]
+        # temp_head=generation_name[0:-1]
+        # temp_tail=generation_name[-1]
 
         if os.path.isdir(target_dir)==False:
             os.mkdir(target_dir)

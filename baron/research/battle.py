@@ -17,10 +17,10 @@ class Battle():
         self.kyokumen=kyokumen#局面
         self.gouhousyu=gouhousyu#合法手
         self.com=com
-        print(self.teban)
-        print(self.kyokumen)
-        print(self.gouhousyu)
-        print(self.com)
+        # print(self.teban)
+        # print(self.kyokumen)
+        # print(self.gouhousyu)
+        # print(self.com)
        
     def get_random_array(self):
         with open('research/generation.txt','r',encoding='utf-8') as file:
@@ -30,7 +30,8 @@ class Battle():
         if os.path.isfile(target_path)==True:
             with open(target_path,'r',encoding='utf-8') as file:
                 random_array=list(csv.reader(file))[0]
-        print(random_array)
+        # print(random_array)
+        return random_array
                 
     def return_check_index(self):
         check_index=[]
@@ -46,7 +47,7 @@ class Battle():
         print("関数読み込み")
         with open('research/generation.txt','r',encoding='utf-8') as file:
             generation_name=file.read().strip()
-            target_path=os.getcwd()+"/research/"+generation_name+"/individual"+str(5)+".csv"
+            target_path=os.getcwd()+"/research/"+generation_name+"/individual"+self.com+".csv"
         with open(target_path,'r',encoding='utf-8') as file:
             evalution_function=list(csv.reader(file))
         evalution_function.pop(0)
@@ -58,16 +59,14 @@ class Battle():
         self.get_random_array()#個体のランダムシャッフル
         check_index=self.return_check_index()#確認用配列の作成
         evalution_function=self.read_individual_csv()#対象の評価関数の読み込み
-        print(check_index)
-        print(evalution_function)#評価関数
+        # print(check_index)
+        # print(evalution_function)#評価関数
         for i in range(len(check_index)):
             temp.append(evalution_function[check_index[i][0]][check_index[i][1]])
         print(temp)
-        print(temp.index(max(temp)))#配列の中の一番大きな数は、何番目に格納されているか？
+        # print(temp.index(max(temp)))#配列の中の一番大きな数は、何番目に格納されているか？
         ai_tyakusyu=self.gouhousyu[temp.index(max(temp))]
-        print(ai_tyakusyu)
-        # temp1=[20,50,60,30,70,80,15,90,15,30]
-        # print(temp1.index(max(temp1)))
+        # print(ai_tyakusyu)
         return ai_tyakusyu
 
     def test(self):
