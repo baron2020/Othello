@@ -128,23 +128,59 @@ class OtelloGui(tk.Tk):
         #イベント設定
         self.board.bind('<ButtonPress-1>',self.click_start)#左クリック
      
+    def reseach(self):
+        """
+        研究スタート。
+        """
+        if self.teban=='黒':
+            switch_array=self.use_black_array
+        elif self.teban=='白':
+            switch_array=self.use_white_array
+        self.set_gouhousyu_array()#AIの合法手生成
+        if len(self.gouhousyu_array)==0:
+            print(self.teban+'の合法手はありません。パスします。')
+            # tk.messagebox.showinfo('showinfo','合法手はありません。パスします。')#パス
+            self.change_teban()
+            self.gouhousyu_array.clear()#合法手配列のリセット
+            return
+        
+        bt=battle.Battle(self.teban,self.game_recode,self.gouhousyu_array,self.random_array[0])
+        reseach_ai=bt.matome()
+        print("研究ai着手"+reseach_ai)
+        key_index=self.game_recode_keys.index(reseach_ai)#配列の何番目に存在するか？
+        #AIの着手石を描写する
+        self.board.create_oval(self.stone_coordinate[key_index][0],self.stone_coordinate[key_index][1],
+                               self.stone_coordinate[key_index][2],self.stone_coordinate[key_index][3],fill=switch_array[0],tag="stone")#[0]:自石
+        self.game_recode[reseach_ai]=switch_array[0]#ゲーム記録も更新する
+        self.turn_over_stone(reseach_ai)#反転動作
+        self.check_stone_num()#石の数の確認,更新
+        self.win_lose_judgment()#勝敗判定
+        if self.end_flg==True:#勝敗がついた
+           return
+        self.change_teban()#手番交代
+        self.gouhousyu_array.clear()#合法手配列のリセット
+        self.turn_over_stone_array.clear()#反転対象配列のリセット    
+    
     def click_start(self,event):
         """
         クリックでスタートした時の処理。
         """
-        if self.mode==3: 
-            #研究AI対AI
-            print("研究中")
-            print(self.random_array)
-            
-            self.set_gouhousyu_array()#合法手生成
-            bt=battle.Battle(self.teban,self.game_recode,self.gouhousyu_array,self.random_array[0])
-            bt.matome()
-            # print(temp)
-            return
-            
         if self.end_flg==True:#勝敗が着いている    
             return
+        
+        if self.mode==3: 
+            #研究中AI対AI
+            print("研究中")
+            print('AI対AIで10手進めます。')
+            start_time=0
+            for i in range(6):#10手指し
+                if self.end_flg==False:
+                    start_time+=150
+                    self.board.after(start_time,self.reseach)#AIの着手処理
+                if self.end_flg==True:
+                    break
+            return
+        
         if self.mode==2: #もしAI対AIなら
             print('AI対AIで10手進めます。')
             start_time=0
