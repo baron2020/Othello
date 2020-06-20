@@ -36,12 +36,12 @@ class Battle():
     def return_check_index(self):
         check_index=[]
         for i in range(len(self.gouhousyu)):
-            print(self.gouhousyu[i])
+            # print(self.gouhousyu[i])
             target_x=int(self.gouhousyu[i][1:2])-1#二文字目の段の切り出し
             target_y=int(self.gouhousyu[i][3:4])-1#四文字目の筋の切り出し
             check_index.append([target_x,target_y])
-            # print(check_array)
-            return check_index
+        # print(check_index)
+        return check_index
 
     def read_individual_csv(self):
         print("関数読み込み")
@@ -55,18 +55,17 @@ class Battle():
         return evalution_function
 
     def matome(self):
-        temp=[]#この配列の中から一番大きな数字を探す
-        self.get_random_array()#個体のランダムシャッフル
+        check_temp=[]#この配列の中から一番大きな数字を探す
         check_index=self.return_check_index()#確認用配列の作成
         evalution_function=self.read_individual_csv()#対象の評価関数の読み込み
+        # print(check_temp)
         # print(check_index)
-        # print(evalution_function)#評価関数
+        # print(evalution_function)
         for i in range(len(check_index)):
-            temp.append(evalution_function[check_index[i][0]][check_index[i][1]])
-        print(temp)
-        # print(temp.index(max(temp)))#配列の中の一番大きな数は、何番目に格納されているか？
-        ai_tyakusyu=self.gouhousyu[temp.index(max(temp))]
-        # print(ai_tyakusyu)
+            check_temp.append(evalution_function[check_index[i][0]][check_index[i][1]])
+        print("☆☆☆")
+        print(check_temp)
+        ai_tyakusyu=self.gouhousyu[check_temp.index(max(check_temp))]
         return ai_tyakusyu
 
     def test(self):
