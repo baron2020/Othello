@@ -173,7 +173,7 @@ class OtelloGui(tk.Tk):
             print("研究中")
             print('AI対AIで10手進めます。')
             start_time=0
-            for i in range(6):#10手指し
+            for i in range(1):#10手指し
                 if self.end_flg==False:
                     start_time+=150
                     self.board.after(start_time,self.reseach)#AIの着手処理
