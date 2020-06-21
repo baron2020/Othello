@@ -55,17 +55,21 @@ class Battle():
         return evalution_function
 
     def matome(self):
-        check_temp=[]#この配列の中から一番大きな数字を探す
+        max_check=[]#この配列の中から一番大きな数字を探す
         check_index=self.return_check_index()#確認用配列の作成
         evalution_function=self.read_individual_csv()#対象の評価関数の読み込み
         # print(check_temp)
         # print(check_index)
         # print(evalution_function)
         for i in range(len(check_index)):
-            check_temp.append(evalution_function[check_index[i][0]][check_index[i][1]])
-        print("☆☆☆")
-        print(check_temp)
-        ai_tyakusyu=self.gouhousyu[check_temp.index(max(check_temp))]
+            print(evalution_function[check_index[i][0]][check_index[i][1]])
+            max_check.append(evalution_function[check_index[i][0]][check_index[i][1]])
+        max_check=list(map(int,max_check))
+        ai_tyakusyu=self.gouhousyu[max_check.index(max(max_check))]
+        print(self.gouhousyu)
+        print(max_check)
+        print(max(max_check))
+        print(max_check.index(max(max_check)))
         return ai_tyakusyu
 
     def test(self):
