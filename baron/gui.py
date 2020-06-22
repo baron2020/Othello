@@ -134,8 +134,10 @@ class OtelloGui(tk.Tk):
         """
         if self.teban=='黒':
             switch_array=self.use_black_array
+            switch_kotai=self.random_array[0]
         elif self.teban=='白':
             switch_array=self.use_white_array
+            switch_kotai=self.random_array[1]
         self.set_gouhousyu_array()#AIの合法手生成
         if len(self.gouhousyu_array)==0:
             print(self.teban+'の合法手はありません。パスします。')
@@ -144,7 +146,7 @@ class OtelloGui(tk.Tk):
             self.gouhousyu_array.clear()#合法手配列のリセット
             return
         
-        bt=battle.Battle(self.teban,self.game_recode,self.gouhousyu_array,self.random_array[0])
+        bt=battle.Battle(self.teban,self.game_recode,self.gouhousyu_array,switch_kotai)
         reseach_ai=bt.matome()
         print("研究ai着手"+reseach_ai)
         key_index=self.game_recode_keys.index(reseach_ai)#配列の何番目に存在するか？
@@ -173,7 +175,7 @@ class OtelloGui(tk.Tk):
             print("研究中")
             print('AI対AIで10手進めます。')
             start_time=0
-            for i in range(1):#10手指し
+            for i in range(10):#10手指し
                 if self.end_flg==False:
                     start_time+=150
                     self.board.after(start_time,self.reseach)#AIの着手処理
