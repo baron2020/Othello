@@ -4,7 +4,7 @@ Created on Sun Apr 19 22:08:02 2020
     
 @author: barosan
 """
-
+from research import create_individual
 from research import battle
 import ai
 import tkinter as tk
@@ -132,6 +132,7 @@ class OtelloGui(tk.Tk):
         """
         研究スタート。
         """
+        print(self.random_array)
         if self.teban=='黒':
             switch_array=self.use_black_array
             switch_kotai=self.random_array[0]
@@ -174,6 +175,8 @@ class OtelloGui(tk.Tk):
             #研究中AI対AI
             print("研究中")
             print('AI対AIで10手進めます。')
+            ci=create_individual.CreateIndividual()
+            ci.writing_record_txt()#トーナメント結果
             start_time=0
             for i in range(10):#10手指し
                 if self.end_flg==False:
