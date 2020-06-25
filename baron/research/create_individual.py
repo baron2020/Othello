@@ -56,6 +56,14 @@ class CreateIndividual():
     def writing_generation_txt(self,temp):   
         with open('research/generation.txt','w',encoding='utf-8') as file:
             file.write(temp)
+            
+    def writing_record_txt(self):
+        with open('research/generation.txt','r',encoding='utf-8') as file:
+            generation_name=file.read().strip()
+        target_dir=os.getcwd()+"/research/"+generation_name
+        print(target_dir)
+        with open(target_dir+'/record.txt','a',encoding='utf-8') as file:
+            file.write("test0625\n")
 
     def writing_random_csv(self,path):    
         array=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
@@ -88,6 +96,7 @@ class CreateIndividual():
             elif generation_name!="generation1":
                 print('2世代以降の処理')
             self.writing_random_csv(target_dir)
+            # self.writing_record_txt(target_dir)
             # self.writing_generation_txt(temp_head+str(int(temp_tail)+1))
         else:
             print("存在するので何もしない")
