@@ -1,0 +1,75 @@
+
+body{
+	/*min-width:100%;*/
+	/*overflow:hidden;上下左右スライド無効*/
+
+	}
+
+#wrap{
+	position:absolute; /*ページ全体を中央揃えにする */
+	top:50%;
+	left:50%;
+	margin-right:50%;
+	transform:translate(-50%,-50%);/* Y軸,X軸を移動する。*/	
+	max-width:480px;
+	width:100%;
+	
+	
+/*選択コピー無効*/	
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+span{
+font-size:2vh;
+margin:1%;
+padding:2%;
+}
+
+table{
+	max-width:432px;
+	width:88%;
+	max-height:432px;
+}
+
+.allMainDisp{
+	max-width:480px;
+	max-height:480px;
+	width:100%;
+	background-color:limegreen;
+}
+/* １マス */
+.ban{
+	padding:0;
+	border-collapse:collapse;
+	text-aligin:center;	
+	box-shadow: 0 0 0 0.5px black inset;
+border:1px solid black;
+/* box-shadow: 0 0 0 1px black inset ;
+   border:0.5px solid black;
+   border:1px solid black;
+   -webkit-box-sizing: border-box;
+   box-sizing:border-box;
+*/
+	max-width:54px;
+	max-height:54px;
+	width:11%;
+	height:50px;
+}
+/* オセロ盤 */
+#board{
+	border-collapse:collapse;
+	box-shadow: 0 0 0 2px black inset;
+}
+/* 盤周り上,下側 class指定 */ 
+#mainDispTop,#mainDispBottom{
+height:25px;
+width:100%;
+/* background-color:skyblue; */
+}
+
