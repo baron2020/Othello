@@ -2,10 +2,29 @@
 //スタート
 function start(){
 	userCheck();
+	startDisplay();
 	mainAria();
+cssAdjust("d4s4");//全てのボードの横幅,高さをを同じにする
+}
 
-
+//cssの調整
+function cssAdjust(targetId){
+	let targetElement=document.getElementById(targetId);
+	let targetRect=targetElement.getBoundingClientRect();
+	let targetClass=targetElement.className;//クラス名
+	//console.log("横幅"+targetRect.width);	
+	//console.log("クラス名"+targetClass);
+	let HW=Math.floor(targetRect.width);//対象の横幅
+	let tagetElements=document.getElementsByClassName(targetClass);
+	console.log(HW);
+	//console.log(tagetElements);
+	for(let i=0;i<tagetElements.length;i++){
+		tagetElements[i].style.width=HW+"px";//ボードの横幅を同じにする
+		tagetElements[i].style.height=HW+"px";//ボードの高さを横幅と同じにする
 	}
+	document.getElementById("mainDispTop").style.height=HW/2+"px";//ボードトップの高さを調整する
+	document.getElementById("mainDispBottom").style.height=HW/2+"px";//ボードボトムの高さを調整する
+}
 
 //ユーザーチェック
 function userCheck(){
@@ -28,6 +47,12 @@ function userCheck(){
 	document.getElementById("useros").innerHTML="OS："+userOs;//userのosを表示
 	document.getElementById("userw").innerHTML="横幅："+userW;//userの横幅を表示
 	document.getElementById("userh").innerHTML="高さ："+userH;//userの高さを表示
+}
+
+//開始時の表示
+function startDisplay(){
+	document.getElementById("teban").innerHTML="黒";//手番の表示
+	document.getElementById("gamecount").innerHTML="1手目";//何手目の表示
 }
 
 //中央メイン盤の作成

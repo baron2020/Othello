@@ -1,3 +1,44 @@
+table {
+	border-collapse:collapse;
+	border-spacing:0;
+}
+table{
+  border-collapse: collapse;
+  }
+
+
+caption,th {
+	text-align:left;
+}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td { 
+	margin:0;
+	padding:0;
+}
+
+fieldset,img { 
+	border:0;
+}
+address,caption,cite,code,dfn,em,strong,th,var {
+	font-style:normal;
+	font-weight:normal;
+}
+ol,ul {
+	list-style:none;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-size:100%;
+	font-weight:normal;
+}
+q:before,q:after {
+	content:'';
+}
+abbr,acronym { border:0;
+}
+
+/*
+リセットcss終了
+*/
 
 body{
 	/*min-width:100%;*/
@@ -33,7 +74,7 @@ padding:2%;
 
 table{
 	max-width:432px;
-	width:88%;
+	width:90%;
 	max-height:432px;
 }
 
@@ -59,7 +100,7 @@ border:1px solid black;
 	max-width:54px;
 	max-height:54px;
 	width:11%;
-	height:50px;
+	height:40px;
 }
 /* オセロ盤 */
 #board{
@@ -73,3 +114,7 @@ width:100%;
 /* background-color:skyblue; */
 }
 
+
+#gamemode,#teban,#outedisp,#enddisp,#windisp,#gamecount{
+	font-weight:bolder;/* 太字にする */
+}
