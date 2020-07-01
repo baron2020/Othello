@@ -1,30 +1,21 @@
 ﻿
 //スタート
 function start(){
+	let supportTouch='ontouchend'in document;//タッチイベントがサポートされているか
+	let EVENTNAME=supportTouch ? 'touchstart':'mousedown';//タッチイベントかマウスダウンイベントか
 	userCheck();
 	startDisplay();
 	mainAria();
-cssAdjust("d4s4");//全てのボードの横幅,高さをを同じにする
+	cssAdjust("d4s4");//全てのボードの横幅,高さをを同じにする
+	//イベント分岐
+	if(EVENTNAME=='touchstart'){
+		document.addEventListener("touchstart",touchstart);
+	}else{
+		document.addEventListener("mousedown",mousedown);
+	}
 }
 
-//cssの調整
-function cssAdjust(targetId){
-	let targetElement=document.getElementById(targetId);
-	let targetRect=targetElement.getBoundingClientRect();
-	let targetClass=targetElement.className;//クラス名
-	//console.log("横幅"+targetRect.width);	
-	//console.log("クラス名"+targetClass);
-	let HW=Math.floor(targetRect.width);//対象の横幅
-	let tagetElements=document.getElementsByClassName(targetClass);
-	console.log(HW);
-	//console.log(tagetElements);
-	for(let i=0;i<tagetElements.length;i++){
-		tagetElements[i].style.width=HW+"px";//ボードの横幅を同じにする
-		tagetElements[i].style.height=HW+"px";//ボードの高さを横幅と同じにする
-	}
-	document.getElementById("mainDispTop").style.height=HW/2+"px";//ボードトップの高さを調整する
-	document.getElementById("mainDispBottom").style.height=HW/2+"px";//ボードボトムの高さを調整する
-}
+
 
 //ユーザーチェック
 function userCheck(){
@@ -103,6 +94,25 @@ function mainAria(){
 	document.getElementById("mainDispBottom").innerHTML=mainDisplayBottom;
 }
 
+//cssの調整
+function cssAdjust(targetId){
+	let targetElement=document.getElementById(targetId);
+	let targetRect=targetElement.getBoundingClientRect();
+	let targetClass=targetElement.className;//クラス名
+	//console.log("横幅"+targetRect.width);	
+	//console.log("クラス名"+targetClass);
+	let HW=Math.floor(targetRect.width);//対象の横幅
+	let tagetElements=document.getElementsByClassName(targetClass);
+	console.log(HW);
+	//console.log(tagetElements);
+	for(let i=0;i<tagetElements.length;i++){
+		tagetElements[i].style.width=HW+"px";//ボードの横幅を同じにする
+		tagetElements[i].style.height=HW+"px";//ボードの高さを横幅と同じにする
+	}
+	document.getElementById("mainDispTop").style.height=HW/2+"px";//ボードトップの高さを調整する
+	document.getElementById("mainDispBottom").style.height=HW/2+"px";//ボードボトムの高さを調整する
+}
+
 //パソコン用マウスダウン
 function mousedown(e){
 	touchScreen(e.clientX,e.clientY);
@@ -116,5 +126,18 @@ function touchstart(e){
 	}
 }
 //start()系終了---------------------------------------------------------------------------------------
+
+//touchScreen()系開始----------------------------------------------------------------------------------
+//タッチされた時のイベントの処理
+function touchScreen(tx,ty){
+	getCoordinate(tx,ty);//座標、盤内外の取得
+	document.getElementById("test").innerHTML="タッチされました";
+}
+
+//座標取得
+function getCoordinate(tx,ty){
+	console.log("テスト")
+}
+
 
 
