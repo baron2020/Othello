@@ -186,18 +186,31 @@ function getCoordinate(tx,ty){
 
 	Page.cx=Math.floor(tx);
 	Page.cy=Math.floor(ty);
+console.log(Page.cx);
+console.log(Page.cy);
+
 	Page.cxs=Math.floor(((tx-banX)/d1s1rect.width)+1);
 	Page.cys=Math.floor(((ty-banY)/d1s1rect.height)+1);
 
 	Game.currentMasu="d"+Page.cys+"s"+Page.cxs;//カレントのタッチマス
 	//Flg.currentMasuInout=InOut(Page.cys,Page.cxs);//カレントのマスは盤内？盤外？
 	//y,x座標の表示
-	document.getElementById("ky").innerHTML=Page.cy;//y座標
-	document.getElementById("kx").innerHTML=Page.cx;//x座標
+	document.getElementById("cy").innerHTML=Page.cy;//y座標
+	document.getElementById("cx").innerHTML=Page.cx;//x座標
 	
-	document.getElementById("cm").innerHTML=Game.currentMasu;//カレントのタッチマス
-	//document.getElementById("bnai").innerHTML=Flg.currentMasuInout;//カレントのマスは盤内？盤外？
+	document.getElementById("cMasu").innerHTML=Game.currentMasu;//カレントのタッチマス
+	
+	Flg.currentMasuInout=inOut(Page.cys,Page.cxs);
+	document.getElementById("inOut").innerHTML=Flg.currentMasuInout;//カレントのマスは盤内？盤外？
 
+}
+
+//オセロ盤の中か？外か？
+function inOut(targetY,targetX){
+	if(((targetY>=1)&&(targetY<=8))&&((targetX>=1)&&(targetX<=8))){
+		return true;
+	}
+	return false;
 }
 
 
