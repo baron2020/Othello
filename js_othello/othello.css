@@ -118,3 +118,25 @@ width:100%;
 #gamemode,#teban,#outedisp,#enddisp,#windisp,#gamecount{
 	font-weight:bolder;/* ‘¾š‚É‚·‚é */
 }
+
+/* Î */
+.stone{
+	text-align:center;/* •¶š‚ğ’†‰›‚É‚·‚é */
+	margin:auto;/* •¶š‚ğ’†‰›‚É‚·‚é */	
+	width:100%;
+	line-height:1;/* —]”’‚ğŠÜ‚ß‚½•¶š‚Ì‚‚³*/
+}
+
+#black{
+width:95%;
+height:95%;
+border-radius:50%;/* Šp‚ÌŠÛ‚İ50%=‰~ */
+background:black;
+}
+
+#white{
+width:95%;
+height:95%;
+border-radius:50%;/* Šp‚ÌŠÛ‚İ50%=‰~ */
+background:white;
+}

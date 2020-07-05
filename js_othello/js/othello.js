@@ -1,4 +1,8 @@
 ﻿//グローバル関数
+
+//石の配列(黒,白)
+var stone=["<p class='stone' id='black'></p>","<p class='stone' id='white'></p>"]
+
 //座標関連
 var Page ={ cy:0,//現在のy
 			cx:0,//現在のx
@@ -41,6 +45,8 @@ function start(){
 	startDisplay();
 	mainAria();
 	cssAdjust("d4s4");//全てのボードの横幅,高さをを同じにする
+	setUp();
+	
 	//イベント分岐
 	if(EVENTNAME=='touchstart'){
 		document.addEventListener("touchstart",touchstart);
@@ -145,6 +151,15 @@ function cssAdjust(targetId){
 	}
 	document.getElementById("mainDispTop").style.height=HW/2+"px";//ボードトップの高さを調整する
 	document.getElementById("mainDispBottom").style.height=HW/2+"px";//ボードボトムの高さを調整する
+}
+
+//石の初期配置
+function setUp(){
+	document.getElementById("d4s4").insertAdjacentHTML('afterbegin',stone[1]);
+	document.getElementById("d4s5").insertAdjacentHTML('afterbegin',stone[0]);
+	document.getElementById("d5s4").insertAdjacentHTML('afterbegin',stone[0]);
+	document.getElementById("d5s5").insertAdjacentHTML('afterbegin',stone[1]);
+
 }
 
 //パソコン用マウスダウン
