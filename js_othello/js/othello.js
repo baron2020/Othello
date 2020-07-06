@@ -11,8 +11,8 @@ var Page ={ cy:0,//現在のy
 			
 			};
 //ゲームの情報
-var Game ={ teban:"先手",
-			rivalTeban:"後手",//逆の手番
+var Game ={ teban:"黒",
+			rivalTeban:"白",//逆の手番
 			count:1,//何手目か？
 			currentPieceId:"",//現在の駒のId
 			currentPieceName:"",//現在の駒(二文字)
@@ -82,8 +82,8 @@ function userCheck(){
 
 //開始時の表示
 function startDisplay(){
-	document.getElementById("teban").innerHTML="黒";//手番の表示
-	document.getElementById("gamecount").innerHTML="1手目";//何手目の表示
+	document.getElementById("teban").innerHTML=Game.teban;//手番の表示
+	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 }
 
 //中央メイン盤の作成
@@ -143,7 +143,7 @@ function cssAdjust(targetId){
 	//console.log("クラス名"+targetClass);
 	let HW=Math.floor(targetRect.width);//対象の横幅
 	let tagetElements=document.getElementsByClassName(targetClass);
-	console.log(HW);
+	//console.log(HW);
 	//console.log(tagetElements);
 	for(let i=0;i<tagetElements.length;i++){
 		tagetElements[i].style.width=HW+"px";//ボードの横幅を同じにする
@@ -181,43 +181,45 @@ function touchstart(e){
 function touchScreen(tx,ty){
 	getCoordinate(tx,ty);//座標、盤内外の取得
 	document.getElementById("test").innerHTML="タッチされました";
+	
+	if(Flg.currentMasuInout==true){
+		console.log('test:'+Flg.currentMasuInout);//盤内
+		console.log('現在のマス:'+Game.currentMasu);
+		tyakusyu(Game.currentMasu);
+	}else{
+		console.log('test:'+Flg.currentMasuInout);//盤外
+		return;
+	}
+	tyakusyuEnd();//手番&何手目の進行
 }
 
 //座標取得
 function getCoordinate(tx,ty){
-	console.log("テスト")
+	//console.log("テスト")
 	let d1s1Element=document.getElementById("d1s1");
 	let d1s1rect=d1s1Element.getBoundingClientRect();
-	
-	console.log("d1s1までの横"+Math.round(d1s1rect.left));//四捨五入
-	console.log("d1s1までの高さ"+Math.round(d1s1rect.top));
-	console.log("d1s1の幅"+d1s1rect.width);
-	console.log("d1s1の高さ"+d1s1rect.height);
-
+	//console.log("d1s1までの横"+Math.round(d1s1rect.left));//四捨五入
+	//console.log("d1s1までの高さ"+Math.round(d1s1rect.top));
+	//console.log("d1s1の幅"+d1s1rect.width);
+	//console.log("d1s1の高さ"+d1s1rect.height);
 	let banX=Math.round(d1s1rect.left);//将棋盤(d1s1)までの横幅(距離)
 	let banY=Math.round(d1s1rect.top);//将棋盤(d1s1)までの高さ(距離)
-	console.log(banX);
-	console.log(banY);
-
+	//console.log(banX);
+	//console.log(banY);
 	Page.cx=Math.floor(tx);
 	Page.cy=Math.floor(ty);
-console.log(Page.cx);
-console.log(Page.cy);
-
+	//console.log(Page.cx);
+	//console.log(Page.cy);
 	Page.cxs=Math.floor(((tx-banX)/d1s1rect.width)+1);
 	Page.cys=Math.floor(((ty-banY)/d1s1rect.height)+1);
-
 	Game.currentMasu="d"+Page.cys+"s"+Page.cxs;//カレントのタッチマス
 	//Flg.currentMasuInout=InOut(Page.cys,Page.cxs);//カレントのマスは盤内？盤外？
 	//y,x座標の表示
 	document.getElementById("cy").innerHTML=Page.cy;//y座標
 	document.getElementById("cx").innerHTML=Page.cx;//x座標
-	
 	document.getElementById("cMasu").innerHTML=Game.currentMasu;//カレントのタッチマス
-	
 	Flg.currentMasuInout=inOut(Page.cys,Page.cxs);
 	document.getElementById("inOut").innerHTML=Flg.currentMasuInout;//カレントのマスは盤内？盤外？
-
 }
 
 //オセロ盤の中か？外か？
@@ -228,5 +230,27 @@ function inOut(targetY,targetX){
 	return false;
 }
 
+//着手したマスに石を置く
+function tyakusyu(setMasu){
+	if(	Game.teban=='黒'){
+		targetStone=stone[0];
+	}else if(Game.teban=='白'){
+		targetStone=stone[1];
+	}
+	document.getElementById(setMasu).insertAdjacentHTML('afterbegin',targetStone);
+}
+
+//着手終了の処理
+function tyakusyuEnd(){
+	if(	Game.teban=='黒'){
+		Game.teban='白';
+	}else if(Game.teban=='白'){
+		Game.teban='黒';
+	}
+	Game.count++;
+	document.getElementById("teban").innerHTML=Game.teban;//手番の表示
+	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
+	return;
+}
 
 
