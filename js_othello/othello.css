@@ -115,7 +115,7 @@ width:100%;
 }
 
 
-#gamemode,#teban,#outedisp,#enddisp,#windisp,#gamecount{
+#gamemode,#teban,#blackNum,#whiteNum,#enddisp,#windisp,#gamecount{
 	font-weight:bolder;/* ‘¾Žš‚É‚·‚é */
 }
 
