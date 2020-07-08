@@ -66,12 +66,6 @@ body{
                                   supported by Chrome and Opera */
 }
 
-span{
-font-size:2vh;
-margin:1%;
-padding:2%;
-}
-
 table{
 	max-width:432px;
 	width:90%;
@@ -115,8 +109,18 @@ width:100%;
 }
 
 
-#gamemode,#teban,#blackNum,#whiteNum,#enddisp,#windisp,#gamecount{
+span{
+font-size:2vh;
+margin:1%;
+padding:1%;
+}
+
+#gamemode,#teban,#blackNum,#whiteNum,#winner,#endDisp,#gamecount{
 	font-weight:bolder;/* ‘¾š‚É‚·‚é */
+}
+
+#disp,#consider{
+margin:2%;
 }
 
 /* Î */

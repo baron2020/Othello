@@ -31,6 +31,7 @@ var Page ={ cy:0,//現在のy
 //ゲームの情報
 var Game ={ teban:"黒",
 			rivalTeban:"白",//逆の手番
+			winner:"",
 			count:1,//何手目か？
 			blackNum:2,//黒石の数
 			whiteNum:2,//白石の数
@@ -44,13 +45,11 @@ var Game ={ teban:"黒",
 			};
 //フラグ
 var Flg = { //強制終了フラグ
-			tumi:false,//詰んでいる？
+			gameEnd:false,//対局が終了しているか？
 			endMode:false,//false:対局モード中
 			//選択後
 			firstTouchMasuInOut:false,//最初にタッチしたマスは盤内か？
 			currentMasuInout:false,//現在のマスは盤内か？
-			firstChoice:true,//最初に駒を選択できる状態:true
-			firstPromotion:false,//最初に選択した駒は成駒か？
 			get:false,//駒をとっていない
 			
 			//棋譜用
@@ -104,10 +103,11 @@ function startDisplay(){
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
 	document.getElementById("whiteNum").innerHTML="白石："+Game.whiteNum;//白石の数
-	
-	tempInp1="<input class='con'id='re1' type='button' value='ページのリロード'onClick='inputContinue()'style='width:37%'>";
-	tempInp2="<input class='con'id=='de1' type='button' value='ログ削除'onClick='inputLogDelete()'style='width:23%'>";
-	document.getElementById("consider").innerHTML=tempInp1+tempInp2;
+	inpPass="<input class='con'id='re1' type='button' value='パス'onClick='inputPass()'style='width:12%'>";
+	inpResign="<input class='con'id=='de1' type='button' value='投了'onClick='inputResign()'style='width:12%'>";
+	inpContinue="<input class='con'id='re1' type='button' value='最初に戻る'onClick='inputContinue()'style='width:24%'>";
+	inpLogDelete="<input class='con'id=='de1' type='button' value='ログ削除'onClick='inputLogDelete()'style='width:20%'>";
+	document.getElementById("consider").innerHTML='　'+inpPass+'　'+inpResign+'　'+inpContinue+'　'+inpLogDelete;
 }
 
 //中央メイン盤の作成
@@ -187,14 +187,32 @@ function setUp(){
 
 //パソコン用マウスダウン
 function mousedown(e){
-	touchScreen(e.clientX,e.clientY);
+	try{
+		if(Flg.gameEnd==false){
+			touchScreen(e.clientX,e.clientY);
+		}else{
+			throw new Error("throw new Error");
+		}
+	}
+	catch(e){
+		console.log("catch(e):ゲーム終了しています");
+	}
 }
 //スマホ用タッチスタート
 function touchstart(e){
-	//もしタッチされたのが一箇所であるなら
-	if(e.targetTouches.length==1){
-		touch=e.targetTouches[0];
-		touchScreen(touch.clientX,touch.clientY);
+	try{
+		if(Flg.gameEnd==false){
+			//もしタッチされたのが一箇所であるなら
+			if(e.targetTouches.length==1){
+				touch=e.targetTouches[0];
+				touchScreen(touch.clientX,touch.clientY);
+			}
+		}else{
+			throw new Error("throw new Error");
+		}
+	}
+	catch(e){
+		console.log("catch(e):ゲーム終了しています");
 	}
 }
 //start()系終了---------------------------------------------------------------------------------------
@@ -214,6 +232,11 @@ function touchScreen(tx,ty){
 		return;
 	}
 	changeTeban();//手番の切り替えに伴う処理
+	winLoseJudgment();//決着が着いているか？
+	
+	if(Flg.gameEnd==true){
+		endDisplay();
+	}
 }
 
 //座標取得
@@ -237,9 +260,9 @@ function getCoordinate(tx,ty){
 	Game.currentMasu="d"+Page.cys+"s"+Page.cxs;//カレントのタッチマス
 	//Flg.currentMasuInout=InOut(Page.cys,Page.cxs);//カレントのマスは盤内？盤外？
 	//y,x座標の表示
-	document.getElementById("cMasu").innerHTML=Game.currentMasu;//カレントのタッチマス
+	//document.getElementById("cMasu").innerHTML=Game.currentMasu;//カレントのタッチマス
 	Flg.currentMasuInout=inOut(Page.cys,Page.cxs);
-	document.getElementById("inOut").innerHTML=Flg.currentMasuInout;//カレントのマスは盤内？盤外？
+	//document.getElementById("inOut").innerHTML=Flg.currentMasuInout;//カレントのマスは盤内？盤外？
 }
 
 //オセロ盤の中か？外か？
@@ -268,8 +291,10 @@ function tyakusyu(setMasu){
 function changeTeban(){
 	if(	Game.teban=='黒'){
 		Game.teban='白';
+		Game.rivalTeban='黒';
 	}else if(Game.teban=='白'){
 		Game.teban='黒';
+		Game.rivalTeban='白';
 	}
 	Game.count++;
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
@@ -299,15 +324,68 @@ function checkStoneNum(){
 	document.getElementById("whiteNum").innerHTML="白石："+Game.whiteNum;//白石の数
 }
 
+//着手完了後に、勝敗が着いているか調べる。勝敗が着いている場合は、手番テキストを更新し、終了フラグを立てる。
 function winLoseJudgment(){
-	//着手完了後に、勝敗が着いているか調べる。
-	//勝敗が着いている場合は、手番テキストを更新し、終了フラグを立てる。
+	//盤面に石の置ける場所がない。又は、石の数が0。であれば終了
+	let tempNoneNum=0;
+	let tempBlackNum=0;
+	let tempWhiteNum=0;
+	for(let i=0;i<gameRecodeKeys.length;i++){
+		if(gameRecode[gameRecodeKeys[i]]=='None'){
+			tempNoneNum++;
+		}
+		if(gameRecode[gameRecodeKeys[i]]=='black'){
+			tempBlackNum++;
+		}
+		if(gameRecode[gameRecodeKeys[i]]=='white'){
+			tempWhiteNum++;
+		}
+	}
+	if((tempNoneNum==0)||(tempBlackNum==0)||(tempWhiteNum==0)){
+		Flg.gameEnd=true;//決着フラグ
+	}
+	if(Flg.gameEnd==true){
+		console.log("決着");
+		if((tempBlackNum==0)||(tempBlackNum<tempWhiteNum)){
+			Game.winner="白の勝ちです";
+			return;
+		}
+		if((tempWhiteNum==0)||(tempBlackNum>tempWhiteNum)){
+			Game.winner="黒の勝ちです";
+			return;
+		}
+		if(tempBlackNum==tempWhiteNum){
+			Game.winner="引き分けです";
+			return;
+		}
+	}
+}
+
+//ゲーム終了時のディスプレイ処理
+function endDisplay(){
+	document.getElementById("teban").remove();
+	document.getElementById("gamecount").remove();
+	document.getElementById("endDisp").innerHTML="お疲れ様でした(*_ _)";
+	document.getElementById("winner").innerHTML=Game.winner;//勝者の表示
+}
+
+//パスボタン
+function inputPass(){
+	changeTeban();
+}
+
+//投了ボタン
+function inputResign(){
+	Flg.gameEnd=true;
+	Game.winner=Game.rivalTeban+"の勝ちです";
+	endDisplay();
 }
 
 //continue:リロード
 function inputContinue(){
 	window.location.reload();
 }
+
 //コンソール削除
 function inputLogDelete(){
 	console.clear();
