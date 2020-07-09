@@ -9,6 +9,7 @@ var gameRecode={'d1s1':'None','d1s2':'None','d1s3':'None','d1s4':'None','d1s5':'
 				'd7s1':'None','d7s2':'None','d7s3':'None','d7s4':'None','d7s5':'None','d7s6':'None','d7s7':'None','d7s8':'None',
 				'd8s1':'None','d8s2':'None','d8s3':'None','d8s4':'None','d8s5':'None','d8s6':'None','d8s7':'None','d8s8':'None'
 				}
+
 //盤面情報のキー
 var gameRecodeKeys=['d1s1','d1s2','d1s3','d1s4','d1s5','d1s6','d1s7','d1s8',
 					'd2s1','d2s2','d2s3','d2s4','d2s5','d2s6','d2s7','d2s8',
@@ -19,6 +20,7 @@ var gameRecodeKeys=['d1s1','d1s2','d1s3','d1s4','d1s5','d1s6','d1s7','d1s8',
 					'd7s1','d7s2','d7s3','d7s4','d7s5','d7s6','d7s7','d7s8',
 					'd8s1','d8s2','d8s3','d8s4','d8s5','d8s6','d8s7','d8s8'
 					]
+
 //石の配列(黒,白)
 var stone=["<p class='stone' id='black'></p>","<p class='stone' id='white'></p>"];
 
@@ -34,6 +36,7 @@ var Page ={ cy:0,//現在のy
 			cys:0,//現在の整数y
 			cxs:0,//現在の整数x
 			};
+
 //ゲームの情報
 var Game ={ teban:"黒",
 			rivalTeban:"白",//逆の手番
@@ -41,24 +44,15 @@ var Game ={ teban:"黒",
 			count:1,//何手目か？
 			blackNum:2,//黒石の数
 			whiteNum:2,//白石の数
-			currentPieceId:"",//現在の駒のId
-			currentPieceName:"",//現在の駒(二文字)
-			currentPieceClass:"",//現在の駒クラス
-			currentMasu:"",//現在のマスのid
-			firstTouchPieceId:"",//一度目にタッチした駒のid
-			firstTouchPieceName:"",//一度目にタッチした駒(二文字)
-			firstTouchMasu:""//一度目にタッチしたマスのid
+			currentMasu:""//現在のマスのid
 			};
+
 //フラグ
 var Flg = { //強制終了フラグ
 			gameEnd:false,//対局が終了しているか？
 			endMode:false,//false:対局モード中
 			//選択後
 			currentMasuInout:false,//現在のマスは盤内か？
-
-			firstTouchMasuInOut:false,//最初にタッチしたマスは盤内か？
-			get:false,//駒をとっていない
-			
 			//棋譜用
 			kihuFirstTouch:true//棋譜用に使うフラグ、最初にタッチできる時:true
 			};
@@ -228,6 +222,10 @@ function touchstart(e){
 //タッチされた時のイベントの処理
 function touchScreen(tx,ty){
 	setGouhousyuArray();//合法手の確認
+	//if(gouhousyuArray.length==0){
+		//alert("合法手はありません。パスしてください。");	//合法手がなければパスを進言する
+		//return;
+	//}
 	getCoordinate(tx,ty);//座標,盤内外の取得
 	console.log('盤内？:'+Flg.currentMasuInout);
 	console.log('現在のマス:'+Game.currentMasu);
@@ -288,13 +286,12 @@ function turnOverStone(startingPoint){
 		targetStone=stone[1];
 		gameRecodeStone='white';
 	}
-	//着手
+	//着手したマスに石を置く。
 	document.getElementById(startingPoint).insertAdjacentHTML('afterbegin',targetStone);
 	gameRecode[startingPoint]=gameRecodeStone;
 	
 	targetDan=Number(startingPoint.substr(1,1));//二文字目の段の切り出し
 	targetSuji=Number(startingPoint.substr(3,1));//四文字目の筋の切り出し
-
 	for(let j=0;j<allDirectionArray.length;j++){
 		turnOverFlg=false;//反転動作確認に使用
 		checkDan=targetDan;
@@ -340,6 +337,67 @@ function turnOverStone(startingPoint){
 		}
 	}
 	return;
+}
+
+//手番の合法手を生成する。
+function setGouhousyuArray(){
+	let tempGouhousyuArray=[];
+	let tagetDan,tagetSuji,checkDan,checkSuji,checkMasu;
+	let existRivalStoneFlg=false;//ライバルの石が間に存在するか？
+	let useBlackArray=['black','white'];//手番黒用
+	let useWhiteArray=['white','black'];//手番白用
+	gouhousyuArray.length=0;
+	if(Game.teban=='黒'){
+		switchArray=useBlackArray;
+	}else if(Game.teban=='白'){
+		switchArray=useWhiteArray;
+	}
+	for(let i=0;i<gameRecodeKeys.length;i++){
+		//gameRecodeKeys[i]:合法手確認の対象のマス
+		if(gameRecode[gameRecodeKeys[i]]!='None'){
+			continue;//合法手確認の対象のマスに石があれば抜ける
+		}
+		targetDan=Number(gameRecodeKeys[i].substr(1,1));//二文字目の段の切り出し
+		targetSuji=Number(gameRecodeKeys[i].substr(3,1));//四文字目の筋の切り出し
+		for(let j=0;j<allDirectionArray.length;j++){
+			existRivalStoneFlg=false;//ライバルの石が間に存在しないフラグをFalseにする
+			checkDan=targetDan;
+			checkSuji=targetSuji;
+			while(true){
+				checkDan+=allDirectionArray[j][0];
+				checkSuji+=allDirectionArray[j][1];
+				checkMasu='d'+String(checkDan)+'s'+String(checkSuji);
+				if((checkDan==0)||(checkSuji==0)||(checkDan==9)||(checkSuji==9)){
+					break;//盤外であれば抜ける
+				}else{
+					//盤内であれば
+					if(gameRecode[checkMasu]=='None'){
+						break;//一マス先に石がなければ抜ける
+					}
+					if((existRivalStoneFlg==false)&&(gameRecode[checkMasu]==switchArray[0])){
+						//[0]:自石
+						break;//#間にライバルの石がない＆一マス先が自石ならぬける
+					}
+					if(gameRecode[checkMasu]==switchArray[1]){
+						//[1]:ライバルの石
+						existRivalStoneFlg=true;
+						continue;//マスの確認方向を一マス伸ばし処理を続ける
+					}
+					if((existRivalStoneFlg==true)&&(gameRecode[checkMasu]==switchArray[0])){
+						//[0]:自石
+						tempGouhousyuArray.push(gameRecodeKeys[i]);//合法手を配列に格納
+						existRivalStoneFlg=false;//フラグをFalseに戻す
+						break;//ループを抜ける
+					}
+				}
+			}
+		}
+	}
+	//配列から重複した値を削除する
+	gouhousyuArray=tempGouhousyuArray.filter((x,i,self)=>self.indexOf(x)===i);
+	//重複の削除
+	console.log("合法手");
+	console.log(gouhousyuArray);
 }
 
 //着手終了の処理
@@ -434,7 +492,14 @@ function endDisplay(){
 
 //パスボタン
 function inputPass(){
+	setGouhousyuArray();
+	if(gouhousyuArray.length!=0){
+		alert("合法手があります。パス出来ません。");
+		return;
+	}
 	changeTeban();
+	Game.count--;
+	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 }
 
 //投了ボタン
@@ -454,62 +519,3 @@ function inputLogDelete(){
 	console.clear();
 }
 
-//手番の合法手を生成する。
-function setGouhousyuArray(){
-	let tempGouhousyuArray=[];
-	let tagetDan,tagetSuji,checkDan,checkSuji,checkMasu;
-	let existRivalStoneFlg=false;//ライバルの石が間に存在するか？
-	let useBlackArray=['black','white'];//手番黒用
-	let useWhiteArray=['white','black'];//手番白用
-	if(Game.teban=='黒'){
-		switchArray=useBlackArray;
-	}else if(Game.teban=='白'){
-		switchArray=useWhiteArray;
-	}
-	for(let i=0;i<gameRecodeKeys.length;i++){
-		//gameRecodeKeys[i]:合法手確認の対象のマス
-		if(gameRecode[gameRecodeKeys[i]]!='None'){
-			continue;//合法手確認の対象のマスに石があれば抜ける
-		}
-		targetDan=Number(gameRecodeKeys[i].substr(1,1));//二文字目の段の切り出し
-		targetSuji=Number(gameRecodeKeys[i].substr(3,1));//四文字目の筋の切り出し
-		for(let j=0;j<allDirectionArray.length;j++){
-			existRivalStoneFlg=false;//ライバルの石が間に存在しないフラグをFalseにする
-			checkDan=targetDan;
-			checkSuji=targetSuji;
-			while(true){
-				checkDan+=allDirectionArray[j][0];
-				checkSuji+=allDirectionArray[j][1];
-				checkMasu='d'+String(checkDan)+'s'+String(checkSuji);
-				if((checkDan==0)||(checkSuji==0)||(checkDan==9)||(checkSuji==9)){
-					break;//盤外であれば抜ける
-				}else{
-					//盤内であれば
-					if(gameRecode[checkMasu]=='None'){
-						break;//一マス先に石がなければ抜ける
-					}
-					if((existRivalStoneFlg==false)&&(gameRecode[checkMasu]==switchArray[0])){
-						//[0]:自石
-						break;//#間にライバルの石がない＆一マス先が自石ならぬける
-					}
-					if(gameRecode[checkMasu]==switchArray[1]){
-						//[1]:ライバルの石
-						existRivalStoneFlg=true;
-						continue;//マスの確認方向を一マス伸ばし処理を続ける
-					}
-					if((existRivalStoneFlg==true)&&(gameRecode[checkMasu]==switchArray[0])){
-						//[0]:自石
-						tempGouhousyuArray.push(gameRecodeKeys[i]);//合法手を配列に格納
-						existRivalStoneFlg=false;//フラグをFalseに戻す
-						break;//ループを抜ける
-					}
-				}
-			}
-		}
-	}
-	//配列から重複した値を削除する
-	gouhousyuArray=tempGouhousyuArray.filter((x,i,self)=>self.indexOf(x)===i);
-	//重複の削除
-	console.log("合法手");
-	console.log(gouhousyuArray);
-}
