@@ -37,26 +37,26 @@ abbr,acronym { border:0;
 }
 
 /*
-ƒŠƒZƒbƒgcssI—¹
+ãƒªã‚»ãƒƒãƒˆcssçµ‚äº†
 */
 
 body{
 	/*min-width:100%;*/
-	/*overflow:hidden;ã‰º¶‰EƒXƒ‰ƒCƒh–³Œø*/
+	/*overflow:hidden;ä¸Šä¸‹å·¦å³ã‚¹ãƒ©ã‚¤ãƒ‰ç„¡åŠ¹*/
 
 	}
 
 #wrap{
-	position:absolute; /*ƒy[ƒW‘S‘Ì‚ğ’†‰›‘µ‚¦‚É‚·‚é */
+	position:absolute; /*ãƒšãƒ¼ã‚¸å…¨ä½“ã‚’ä¸­å¤®æƒãˆã«ã™ã‚‹ */
 	top:50%;
 	left:50%;
 	margin-right:50%;
-	transform:translate(-50%,-50%);/* Y²,X²‚ğˆÚ“®‚·‚éB*/	
+	transform:translate(-50%,-50%);/* Yè»¸,Xè»¸ã‚’ç§»å‹•ã™ã‚‹ã€‚*/	
 	max-width:480px;
 	width:100%;
 	
 	
-/*‘I‘ğƒRƒs[–³Œø*/	
+/*é¸æŠã‚³ãƒ”ãƒ¼ç„¡åŠ¹*/	
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
      -khtml-user-select: none; /* Konqueror HTML */
@@ -78,7 +78,7 @@ table{
 	width:100%;
 	background-color:limegreen;
 }
-/* ‚Pƒ}ƒX */
+/* ï¼‘ãƒã‚¹ */
 .ban{
 	padding:0;
 	border-collapse:collapse;
@@ -96,12 +96,12 @@ border:1px solid black;
 	width:11%;
 	height:40px;
 }
-/* ƒIƒZƒ”Õ */
+/* ã‚ªã‚»ãƒ­ç›¤ */
 #board{
 	border-collapse:collapse;
 	box-shadow: 0 0 0 2px black inset;
 }
-/* ”Õü‚èã,‰º‘¤ classw’è */ 
+/* ç›¤å‘¨ã‚Šä¸Š,ä¸‹å´ classæŒ‡å®š */ 
 #mainDispTop,#mainDispBottom{
 height:25px;
 width:100%;
@@ -116,31 +116,31 @@ padding:1%;
 }
 
 #gamemode,#teban,#blackNum,#whiteNum,#winner,#endDisp,#gamecount{
-	font-weight:bolder;/* ‘¾š‚É‚·‚é */
+	font-weight:bolder;/* å¤ªå­—ã«ã™ã‚‹ */
 }
 
 #disp,#consider{
 margin:2%;
 }
 
-/* Î */
+/* çŸ³ */
 .stone{
-	text-align:center;/* •¶š‚ğ’†‰›‚É‚·‚é */
-	margin:auto;/* •¶š‚ğ’†‰›‚É‚·‚é */	
+	text-align:center;/* æ–‡å­—ã‚’ä¸­å¤®ã«ã™ã‚‹ */
+	margin:auto;/* æ–‡å­—ã‚’ä¸­å¤®ã«ã™ã‚‹ */	
 	width:100%;
-	line-height:1;/* —]”’‚ğŠÜ‚ß‚½•¶š‚Ì‚‚³*/
+	line-height:1;/* ä½™ç™½ã‚’å«ã‚ãŸæ–‡å­—ã®é«˜ã•*/
 }
 
 #black{
 width:95%;
 height:95%;
-border-radius:50%;/* Šp‚ÌŠÛ‚İ50%=‰~ */
+border-radius:50%;/* è§’ã®ä¸¸ã¿50%=å†† */
 background:black;
 }
 
 #white{
 width:95%;
 height:95%;
-border-radius:50%;/* Šp‚ÌŠÛ‚İ50%=‰~ */
+border-radius:50%;/* è§’ã®ä¸¸ã¿50%=å†† */
 background:white;
 }
