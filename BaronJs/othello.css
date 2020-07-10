@@ -115,7 +115,7 @@ margin:1%;
 padding:1%;
 }
 
-#gamemode,#teban,#blackNum,#whiteNum,#winner,#endDisp,#gamecount{
+#teban,#gamecount,#winner,#endDisp,#blackNum,#whiteNum,#passAdvice{
 	font-weight:bolder;/* ‘¾Žš‚É‚·‚é */
 }
 
