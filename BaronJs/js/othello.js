@@ -104,8 +104,8 @@ function startDisplay(){
 	inpPass="<input class='con'id='re1' type='button' value='パス'onClick='inputPass()'style='width:12%'>";
 	inpResign="<input class='con'id=='de1' type='button' value='投了'onClick='inputResign()'style='width:12%'>";
 	inpContinue="<input class='con'id='re1' type='button' value='最初に戻る'onClick='inputContinue()'style='width:24%'>";
-	inpLogDelete="<input class='con'id=='de1' type='button' value='ログ削除'onClick='inputLogDelete()'style='width:20%'>";
-	document.getElementById("consider").innerHTML='　'+inpPass+'　'+inpResign+'　'+inpContinue+'　'+inpLogDelete;
+	//inpLogDelete="<input class='con'id=='de1' type='button' value='ログ削除'onClick='inputLogDelete()'style='width:20%'>";
+	document.getElementById("consider").innerHTML='　'+inpPass+'　'+inpResign+'　'+inpContinue;
 }
 
 //中央メイン盤の作成
@@ -222,6 +222,7 @@ function touchScreen(tx,ty){
 	//ゲーム終了。又は、パスをするしかない状態。
 		return;
 	}
+baronAi();
 	setGouhousyuArray();//合法手の確認
 	getCoordinate(tx,ty);//座標,盤内外の取得
 	//console.log('盤内？:'+Flg.currentMasuInout);
@@ -246,7 +247,7 @@ function touchScreen(tx,ty){
 		return;
 	}
 	if(Game.teban=='白(バロン)'){
-		baronAi();
+		aiTyakusyu();
 		checkPass();//パスの確認
 	}
 }
@@ -451,10 +452,10 @@ function checkPass(){
 		setGouhousyuArray();//合法手の確認
 		if(gouhousyuArray.length==0){
 			if(Game.teban=='黒(あなた)'){
-				alert("合法手がありません。\nパスしてください。");
+				alert("黒(あなた)\n「合法手がありません。\nパスしてください。」");
 				document.getElementById("passAdvice").innerHTML="パスしてください。";//パス進言
 			}else if(Game.teban=='白(バロン)'){
-				alert("合法手がありません。\nパスします。");
+				alert("白(バロン)\n「合法手がありません。\nパスします。」");
 				document.getElementById("passAdvice").innerHTML="パスしました。";//パス進言
 			}
 			Flg.pass=true;//パスをするしかない状態。
@@ -536,7 +537,7 @@ function inputPass(){
 	}
 	setGouhousyuArray();
 	if(gouhousyuArray.length!=0){
-		alert("合法手があります。\nパス出来ません。");
+		alert("黒(あなた)\n「合法手があります。\nパス出来ません。」");
 		return;
 	}
 	changeTeban();
@@ -548,13 +549,13 @@ function inputPass(){
 	if(gouhousyuArray.length==0){
 		if(Game.teban=='黒(あなた)'){
 			//連続パスによりゲーム終了
-			alert("合法手がありません。\nパスしてください。");
+			alert("黒(あなた)\n「合法手がありません。\nパスしてください。」");
 			document.getElementById("passAdvice").innerHTML="パスしてください。";//パス進言の削除
 			Flg.renzokuPass=true;//連続パス判定
 			return;
 		}else if(Game.teban=='白(バロン)'){
 			//連続パスによりゲーム終了
-			alert("合法手がありません。\nパスします。");
+			alert("白(バロン)\n「合法手がありません。\nパスします。」");
 			alert("連続パスによりゲームを終了します。");
 			//document.getElementById("passAdvice").innerHTML="連続パスによりゲームを終了します。";//連続パス
 			winLoseJudgment(1);//連続パスでゲーム終了
@@ -586,25 +587,85 @@ function inputContinue(){
 }
 
 //コンソール削除
-function inputLogDelete(){
-	console.clear();
-}
+//function inputLogDelete(){
+//	console.clear();
+//}
 
-//バロンAI
-function baronAi(gouhousyu){
+//AI着手
+function aiTyakusyu(){
 	setTimeout(function(){
 		console.log("○秒後に着手");
-		setGouhousyuArray();//合法手の確認
-		var randomIndex=Math.floor(Math.random()*gouhousyuArray.length);
-		var randomAi=gouhousyuArray[randomIndex];
-		console.log("バロンAI着手:"+randomAi);
-		turnOverStone(randomAi);
+		turnOverStone(baronAi());//引数を変えることでAIの強さ変更が可能
 		changeTeban();//手番の切り替え
 		winLoseJudgment(0);//決着が着いているか？
 		if(Flg.gameEnd==true){
 			endDisplay();
 		}
-		
 		return;
 	},1000);
+}
+
+//バロンAI
+function baronAi(){
+	//評価関数
+	let evaluationValue=[[0,0,0,0,0,0,0,0,0],
+						[0,120,-20,20,5,5,20,-20,120],
+						[0,-20,-40,-5,-5,-5,-5,-40,-20],
+						[0,20,-5,15,3,3,15,-5,20],
+						[0,5,-5,3,3,3,3,-5,5],
+						[0,5,-5,3,3,3,3,-5,5],
+						[0,20,-5,15,3,3,15,-5,20],
+						[0,-20,-40,-5,-5,-5,-5,-40,-20],
+						[0,120,-20,20,5,5,20,-20,120],
+						[0,0,0,0,0,0,0,0,0]
+						];
+	let candidateEvaluation=[];//候補手の評価値を格納する配列
+	let indexArray=[];//候補手のインデックスを格納する配列
+	let maxEvaluationValue;//評価値の最大値
+	//console.log("盤面情報");
+	//console.log(gameRecode);
+	setGouhousyuArray();//合法手の確認
+	//console.log(gouhousyuArray);
+	for(let i=0;i<gouhousyuArray.length;i++){
+		console.log(gouhousyuArray[i])
+		let indexY=Number(gouhousyuArray[i].substr(1,1));//二文字目の段の切り出し
+		let indexX=Number(gouhousyuArray[i].substr(3,1));//四文字目の筋の切り出し
+		candidateEvaluation.push(evaluationValue[indexY][indexX]);
+		console.log("候補手の評価値は："+evaluationValue[indexY][indexX])
+	}
+	console.log(candidateEvaluation)//評価値を格納した配列
+	maxEvaluationValue=candidateEvaluation.reduce((a,b)=>Math.max(a,b));//評価値から最大値を検索
+	console.log("候補手の中のMax評価値:"+maxEvaluationValue);
+	for(let i=0;i<candidateEvaluation.length;i++){
+		if(candidateEvaluation[i]==maxEvaluationValue){
+			indexArray.push(i);
+		}
+	}
+	console.log("候補手のインデックス");
+	console.log(indexArray);
+	//indexArray配列をシャッフルする -->
+	for(let i=indexArray.length-1;i>0;i--){
+		let j=Math.floor(Math.random()*(i+1));
+		let temp = indexArray[i];
+		indexArray[i]=indexArray[j];
+		indexArray[j]=temp;
+	}
+	console.log(indexArray);//シャッフル済みのインデックス
+	console.log(indexArray[0]);
+	
+	console.log("バロンの合法手："+gouhousyuArray);
+	console.log("バロンの合法手の評価値："+candidateEvaluation);
+	console.log("バロンの合法手の評価値の最大値："+maxEvaluationValue);
+	let baronAi=gouhousyuArray[indexArray[0]];
+	console.log("バロンの候補手："+baronAi);
+	return baronAi;
+}
+
+//AIランダム着手
+function randomAi(){
+	setGouhousyuArray();//合法手の確認
+	let randomIndex=Math.floor(Math.random()*gouhousyuArray.length);
+	let randomAi=gouhousyuArray[randomIndex];
+	console.log("ランダムAI着手:"+randomAi);
+	return randomAi;
 }
