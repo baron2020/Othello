@@ -185,16 +185,16 @@ function setUp(){
 
 //パソコン用マウスダウン
 function mousedown(e){
-	//try{
-	//	if(Flg.gameEnd==false){
+	try{
+		if(Flg.gameEnd==false){
 			touchScreen(e.clientX,e.clientY);
-	//	}else{
-	//		throw new Error("throw new Error");
-	//	}
-	//}
-	//catch(e){
-	//	console.log("catch(e):ゲーム終了しています");
-	//}
+		}else{
+			throw new Error("throw new Error");
+		}
+	}
+	catch(e){
+		console.log("catch(e):ゲーム終了しています");
+	}
 }
 //スマホ用タッチスタート
 function touchstart(e){
@@ -222,7 +222,6 @@ function touchScreen(tx,ty){
 	//ゲーム終了。又は、パスをするしかない状態。
 		return;
 	}
-baronAi();
 	setGouhousyuArray();//合法手の確認
 	getCoordinate(tx,ty);//座標,盤内外の取得
 	//console.log('盤内？:'+Flg.currentMasuInout);
@@ -452,10 +451,10 @@ function checkPass(){
 		setGouhousyuArray();//合法手の確認
 		if(gouhousyuArray.length==0){
 			if(Game.teban=='黒(あなた)'){
-				alert("黒(あなた)\n「合法手がありません。\nパスしてください。」");
+				alert("黒(あなた)\n「合法手がありません。パスしてください。」");
 				document.getElementById("passAdvice").innerHTML="パスしてください。";//パス進言
 			}else if(Game.teban=='白(バロン)'){
-				alert("白(バロン)\n「合法手がありません。\nパスします。」");
+				alert("白(バロン)\n「合法手がありません。パスします。」");
 				document.getElementById("passAdvice").innerHTML="パスしました。";//パス進言
 			}
 			Flg.pass=true;//パスをするしかない状態。
@@ -537,7 +536,7 @@ function inputPass(){
 	}
 	setGouhousyuArray();
 	if(gouhousyuArray.length!=0){
-		alert("黒(あなた)\n「合法手があります。\nパス出来ません。」");
+		alert("黒(あなた)\n「合法手があります。パス出来ません。」");
 		return;
 	}
 	changeTeban();
@@ -549,13 +548,13 @@ function inputPass(){
 	if(gouhousyuArray.length==0){
 		if(Game.teban=='黒(あなた)'){
 			//連続パスによりゲーム終了
-			alert("黒(あなた)\n「合法手がありません。\nパスしてください。」");
+			alert("黒(あなた)\n「合法手がありません。パスしてください。」");
 			document.getElementById("passAdvice").innerHTML="パスしてください。";//パス進言の削除
 			Flg.renzokuPass=true;//連続パス判定
 			return;
 		}else if(Game.teban=='白(バロン)'){
 			//連続パスによりゲーム終了
-			alert("白(バロン)\n「合法手がありません。\nパスします。」");
+			alert("白(バロン)\n「合法手がありません。パスします。」");
 			alert("連続パスによりゲームを終了します。");
 			//document.getElementById("passAdvice").innerHTML="連続パスによりゲームを終了します。";//連続パス
 			winLoseJudgment(1);//連続パスでゲーム終了
@@ -571,7 +570,7 @@ function inputResign(){
 		return;
 	}
 	let res;
-	res=confirm("投了しますか？");
+	res=confirm("黒(あなた)\n「投了しますか？」");
 	if(res==true){
 		Flg.gameEnd=true;
 		Game.winner=Game.rivalTeban+"の勝ちです";
