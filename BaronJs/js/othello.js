@@ -244,9 +244,7 @@ function touchScreen(tx,ty){
 	checkPass();//パスの確認
 	if(Flg.pass==true){
 		//白(バロン)がパスをするしかない状態。
-		setTimeout(function(){
 			inputPass();
-		},1200);
 		return;
 	}
 	if(Game.teban=='白(バロン)'){
@@ -455,11 +453,15 @@ function checkPass(){
 		setGouhousyuArray();//合法手の確認
 		if(gouhousyuArray.length==0){
 			if(Game.teban=='黒(あなた)'){
-				alert("黒(あなた)\n「合法手がありません。パスしてください。」");
-				document.getElementById("passAdvice").innerHTML="パスしてください。";//パス進言
+				setTimeout(function(){
+					alert("黒(あなた)\n「合法手がありません。パスしてください。」");
+					document.getElementById("passAdvice").innerHTML="パスしてください。";//パス進言
+				},1100);
 			}else if(Game.teban=='白(バロン)'){
-				alert("白(バロン)\n「合法手がありません。パスします。」");
-				document.getElementById("passAdvice").innerHTML="パスしました。";//パス進言
+				setTimeout(function(){
+					alert("白(バロン)\n「合法手がありません。パスします。」");
+					document.getElementById("passAdvice").innerHTML="パスしました。";//パス進言
+				},1100);
 			}
 			Flg.pass=true;//パスをするしかない状態。
 		}else{
@@ -605,7 +607,7 @@ function aiTyakusyu(){
 			endDisplay();
 		}
 		return;
-	},800);
+	},700);
 }
 
 //バロンLv4:1手先読み
