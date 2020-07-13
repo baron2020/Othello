@@ -1,6 +1,6 @@
 ﻿//グローバル関数
 //盤面情報
-var gameRecode={'d1s1':'None','d1s2':'None','d1s3':'None','d1s4':'None','d1s5':'None','d1s6':'None','d1s7':'None','d1s8':'None',
+var gameRecord={'d1s1':'None','d1s2':'None','d1s3':'None','d1s4':'None','d1s5':'None','d1s6':'None','d1s7':'None','d1s8':'None',
 				'd2s1':'None','d2s2':'None','d2s3':'None','d2s4':'None','d2s5':'None','d2s6':'None','d2s7':'None','d2s8':'None',
 				'd3s1':'None','d3s2':'None','d3s3':'None','d3s4':'None','d3s5':'None','d3s6':'None','d3s7':'None','d3s8':'None',
 				'd4s1':'None','d4s2':'None','d4s3':'None','d4s4':'white','d4s5':'black','d4s6':'None','d4s7':'None','d4s8':'None',
@@ -11,7 +11,7 @@ var gameRecode={'d1s1':'None','d1s2':'None','d1s3':'None','d1s4':'None','d1s5':'
 				};
 
 //盤面情報のキー
-var gameRecodeKeys=['d1s1','d1s2','d1s3','d1s4','d1s5','d1s6','d1s7','d1s8',
+var gameRecordKeys=['d1s1','d1s2','d1s3','d1s4','d1s5','d1s6','d1s7','d1s8',
 					'd2s1','d2s2','d2s3','d2s4','d2s5','d2s6','d2s7','d2s8',
 					'd3s1','d3s2','d3s3','d3s4','d3s5','d3s6','d3s7','d3s8',
 					'd4s1','d4s2','d4s3','d4s4','d4s5','d4s6','d4s7','d4s8',
@@ -97,6 +97,7 @@ function userCheck(){
 
 //開始時の表示
 function startDisplay(){
+	document.getElementById("com").innerHTML="com：バロン Lv4";//comのversion
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
@@ -185,16 +186,16 @@ function setUp(){
 
 //パソコン用マウスダウン
 function mousedown(e){
-	try{
+	//try{
 		if(Flg.gameEnd==false){
 			touchScreen(e.clientX,e.clientY);
 		}else{
 			throw new Error("throw new Error");
 		}
-	}
-	catch(e){
-		console.log("catch(e):ゲーム終了しています");
-	}
+	//}
+	//catch(e){
+		//console.log("catch(e):ゲーム終了しています");
+	//}
 }
 //スマホ用タッチスタート
 function touchstart(e){
@@ -215,9 +216,10 @@ function touchstart(e){
 }
 //start()系終了---------------------------------------------------------------------------------------
 
-//touchScreen()系開始----------------------------------------------------------------------------------
+//touchScreen()系開始---------------------------------------------------------------------------------
 //タッチされた時のイベントの処理
 function touchScreen(tx,ty){
+
 	if((Flg.gameEnd==true)||(Flg.pass==true)||(Flg.renzokuPass==true)){
 	//ゲーム終了。又は、パスをするしかない状態。
 		return;
@@ -226,9 +228,9 @@ function touchScreen(tx,ty){
 	getCoordinate(tx,ty);//座標,盤内外の取得
 	//console.log('盤内？:'+Flg.currentMasuInout);
 	//console.log('現在のマス:'+Game.currentMasu);
-	//console.log('js内の盤の石:'+gameRecode[Game.currentMasu]);
+	//console.log('js内の盤の石:'+gameRecord[Game.currentMasu]);
 	//タッチした箇所が盤内＆石のない箇所＆合法手
-	if((Flg.currentMasuInout==true)&&(gameRecode[Game.currentMasu]=='None')&&(gouhousyuArray.indexOf(Game.currentMasu)!=-1)){
+	if((Flg.currentMasuInout==true)&&(gameRecord[Game.currentMasu]=='None')&&(gouhousyuArray.indexOf(Game.currentMasu)!=-1)){
 		turnOverStone(Game.currentMasu);
 		changeTeban();//手番の切り替え
 		winLoseJudgment(0);//決着が着いているか？
@@ -242,7 +244,9 @@ function touchScreen(tx,ty){
 	checkPass();//パスの確認
 	if(Flg.pass==true){
 		//白(バロン)がパスをするしかない状態。
-		inputPass();
+		setTimeout(function(){
+			inputPass();
+		},1200);
 		return;
 	}
 	if(Game.teban=='白(バロン)'){
@@ -278,7 +282,7 @@ function getCoordinate(tx,ty){
 
 //着手＆石の反転させる。
 function turnOverStone(startingPoint){
-	console.log('着手'+startingPoint);
+//console.log('着手'+startingPoint);
 	let tagetDan,tagetSuji,checkDan,checkSuji,checkMasu,temp;
 	let turnOverFlg=false;//反転動作確認に使用
 	let turnOverStoneArray=[];
@@ -287,15 +291,15 @@ function turnOverStone(startingPoint){
 	if(Game.teban=='黒(あなた)'){
 		switchArray=useBlackArray;
 		targetStone=stone[0];
-		gameRecodeStone='black';
+		gameRecordStone='black';
 	}else if(Game.teban=='白(バロン)'){
 		switchArray=useWhiteArray;
 		targetStone=stone[1];
-		gameRecodeStone='white';
+		gameRecordStone='white';
 	}
 	//着手したマスに石を置く。
 	document.getElementById(startingPoint).insertAdjacentHTML('afterbegin',targetStone);
-	gameRecode[startingPoint]=gameRecodeStone;
+	gameRecord[startingPoint]=gameRecordStone;
 	
 	targetDan=Number(startingPoint.substr(1,1));//二文字目の段の切り出し
 	targetSuji=Number(startingPoint.substr(3,1));//四文字目の筋の切り出し
@@ -312,31 +316,31 @@ function turnOverStone(startingPoint){
 				break;//盤外であれば抜ける
 			}
 			//盤内であれば
-			if(gameRecode[checkMasu]=='None'){
+			if(gameRecord[checkMasu]=='None'){
 				turnOverStoneArray.length=0;
 				break;//一マス先に石がなければ抜ける
 			}
-			if((turnOverFlg==false)&&(gameRecode[checkMasu]==switchArray[0])){
+			if((turnOverFlg==false)&&(gameRecord[checkMasu]==switchArray[0])){
 				//[0]:自石
 				turnOverStoneArray.length=0;
 				break;//間にライバルの石がない＆一マス先が自石ならぬける
 			}
-			if(gameRecode[checkMasu]==switchArray[1]){
+			if(gameRecord[checkMasu]==switchArray[1]){
 				//[1]:ライバルの石
 				turnOverFlg=true;
 				turnOverStoneArray.push(checkMasu);//反転対象の石が置かれているマスを配列に格納する
 				continue;//マスの確認方向を一マス伸ばし処理を続ける
 			}
-			if((turnOverFlg==true)&&(gameRecode[checkMasu]==switchArray[0])){
+			if((turnOverFlg==true)&&(gameRecord[checkMasu]==switchArray[0])){
 				//[0]:自石
-				console.log('反転対象配列');
-				console.log(turnOverStoneArray);
+//console.log('反転対象配列');
+//console.log(turnOverStoneArray);
 				//配列をもとに反転させる
 				for(let i=0;i<turnOverStoneArray.length;i++){
 					temp=document.getElementById(turnOverStoneArray[i]);
 					temp.firstElementChild.remove();//石の削除
 					document.getElementById(turnOverStoneArray[i]).insertAdjacentHTML('afterbegin',targetStone);//石の追加(反転)
-					gameRecode[turnOverStoneArray[i]]=gameRecodeStone;
+					gameRecord[turnOverStoneArray[i]]=gameRecordStone;
 				}
 				turnOverFlg=false//フラグをFalseに戻す
 				break//ループを抜ける
@@ -359,13 +363,13 @@ function setGouhousyuArray(){
 	}else if(Game.teban=='白(バロン)'){
 		switchArray=useWhiteArray;
 	}
-	for(let i=0;i<gameRecodeKeys.length;i++){
-		//gameRecodeKeys[i]:合法手確認の対象のマス
-		if(gameRecode[gameRecodeKeys[i]]!='None'){
+	for(let i=0;i<gameRecordKeys.length;i++){
+		//gameRecordKeys[i]:合法手確認の対象のマス
+		if(gameRecord[gameRecordKeys[i]]!='None'){
 			continue;//合法手確認の対象のマスに石があれば抜ける
 		}
-		targetDan=Number(gameRecodeKeys[i].substr(1,1));//二文字目の段の切り出し
-		targetSuji=Number(gameRecodeKeys[i].substr(3,1));//四文字目の筋の切り出し
+		targetDan=Number(gameRecordKeys[i].substr(1,1));//二文字目の段の切り出し
+		targetSuji=Number(gameRecordKeys[i].substr(3,1));//四文字目の筋の切り出し
 		for(let j=0;j<allDirectionArray.length;j++){
 			existRivalStoneFlg=false;//ライバルの石が間に存在しないフラグをFalseにする
 			checkDan=targetDan;
@@ -378,21 +382,21 @@ function setGouhousyuArray(){
 					break;//盤外であれば抜ける
 				}else{
 					//盤内であれば
-					if(gameRecode[checkMasu]=='None'){
+					if(gameRecord[checkMasu]=='None'){
 						break;//一マス先に石がなければ抜ける
 					}
-					if((existRivalStoneFlg==false)&&(gameRecode[checkMasu]==switchArray[0])){
+					if((existRivalStoneFlg==false)&&(gameRecord[checkMasu]==switchArray[0])){
 						//[0]:自石
 						break;//#間にライバルの石がない＆一マス先が自石ならぬける
 					}
-					if(gameRecode[checkMasu]==switchArray[1]){
+					if(gameRecord[checkMasu]==switchArray[1]){
 						//[1]:ライバルの石
 						existRivalStoneFlg=true;
 						continue;//マスの確認方向を一マス伸ばし処理を続ける
 					}
-					if((existRivalStoneFlg==true)&&(gameRecode[checkMasu]==switchArray[0])){
+					if((existRivalStoneFlg==true)&&(gameRecord[checkMasu]==switchArray[0])){
 						//[0]:自石
-						tempGouhousyuArray.push(gameRecodeKeys[i]);//合法手を配列に格納
+						tempGouhousyuArray.push(gameRecordKeys[i]);//合法手を配列に格納
 						existRivalStoneFlg=false;//フラグをFalseに戻す
 						break;//ループを抜ける
 					}
@@ -429,11 +433,11 @@ function checkStoneNum(){
 	//着手完了後に、石の数の確認をし,石の数のテキストを更新する。
 	let tempBlackNum=0;
 	let tempWhiteNum=0;
-	for(let i=0;i<gameRecodeKeys.length;i++){
-		if(gameRecode[gameRecodeKeys[i]]=='black'){
+	for(let i=0;i<gameRecordKeys.length;i++){
+		if(gameRecord[gameRecordKeys[i]]=='black'){
 			tempBlackNum++;
 		}
-		if(gameRecode[gameRecodeKeys[i]]=='white'){
+		if(gameRecord[gameRecordKeys[i]]=='white'){
 			tempWhiteNum++;
 		}
 	}
@@ -474,14 +478,14 @@ function winLoseJudgment(passEnd){
 	let tempNoneNum=0;
 	let tempBlackNum=0;
 	let tempWhiteNum=0;
-	for(let i=0;i<gameRecodeKeys.length;i++){
-		if(gameRecode[gameRecodeKeys[i]]=='None'){
+	for(let i=0;i<gameRecordKeys.length;i++){
+		if(gameRecord[gameRecordKeys[i]]=='None'){
 			tempNoneNum++;
 		}
-		if(gameRecode[gameRecodeKeys[i]]=='black'){
+		if(gameRecord[gameRecordKeys[i]]=='black'){
 			tempBlackNum++;
 		}
-		if(gameRecode[gameRecodeKeys[i]]=='white'){
+		if(gameRecord[gameRecordKeys[i]]=='white'){
 			tempWhiteNum++;
 		}
 	}
@@ -593,8 +597,8 @@ function inputContinue(){
 //AI着手
 function aiTyakusyu(){
 	setTimeout(function(){
-		console.log("○秒後に着手");
-		turnOverStone(baronAi());//引数を変えることでAIの強さ変更が可能
+//console.log("○秒後に着手");
+		turnOverStone(baronAiLv4());//引数を変えることでAIの強さ変更が可能
 		changeTeban();//手番の切り替え
 		winLoseJudgment(0);//決着が着いているか？
 		if(Flg.gameEnd==true){
@@ -604,44 +608,29 @@ function aiTyakusyu(){
 	},800);
 }
 
-//バロンAI
-function baronAi(){
-	//評価関数
-	let evaluationValue=[[0,0,0,0,0,0,0,0,0],
-						[0,150,-100,20,5,5,20,-100,150],
-						[0,-100,-150,-5,-5,-5,-5,-150,-100],
-						[0,20,-5,15,3,3,15,-5,20],
-						[0,5,-5,3,3,3,3,-5,5],
-						[0,5,-5,3,3,3,3,-5,5],
-						[0,20,-5,15,3,3,15,-5,20],
-						[0,-100,-150,-5,-5,-5,-5,-150,-100],
-						[0,150,-100,20,5,5,20,-100,150],
-						[0,0,0,0,0,0,0,0,0]
-						];
+//バロンLv4:1手先読み
+function baronAiLv4(){
 	let candidateEvaluation=[];//候補手の評価値を格納する配列
 	let indexArray=[];//候補手のインデックスを格納する配列
-	let maxEvaluationValue;//評価値の最大値
-	//console.log("盤面情報");
-	//console.log(gameRecode);
 	setGouhousyuArray();//合法手の確認
 	//console.log(gouhousyuArray);
+	
 	for(let i=0;i<gouhousyuArray.length;i++){
-		console.log(gouhousyuArray[i])
-		let indexY=Number(gouhousyuArray[i].substr(1,1));//二文字目の段の切り出し
-		let indexX=Number(gouhousyuArray[i].substr(3,1));//四文字目の筋の切り出し
-		candidateEvaluation.push(evaluationValue[indexY][indexX]);
-		console.log("候補手の評価値は："+evaluationValue[indexY][indexX])
+		let virtualGameRecord=virtualMove(gouhousyuArray[i]);
+		//console.log(virtualGameRecord);
+		let evaluationValue=returnEvaluationValue(virtualGameRecord);
+		//console.log("評価値"+evaluationValue);
+		candidateEvaluation.push(evaluationValue);
 	}
-	console.log(candidateEvaluation)//評価値を格納した配列
-	maxEvaluationValue=candidateEvaluation.reduce((a,b)=>Math.max(a,b));//評価値から最大値を検索
-	console.log("候補手の中のMax評価値:"+maxEvaluationValue);
+	let maxEvaluationValue=candidateEvaluation.reduce((a,b)=>Math.max(a,b));//評価値から最大値を検索
+console.log("候補手を動かした後のMax評価値:"+maxEvaluationValue);
+	
 	for(let i=0;i<candidateEvaluation.length;i++){
 		if(candidateEvaluation[i]==maxEvaluationValue){
 			indexArray.push(i);
 		}
 	}
-	console.log("候補手のインデックス");
-	console.log(indexArray);
+console.log("候補手のインデックス："+indexArray);
 	//indexArray配列をシャッフルする -->
 	for(let i=indexArray.length-1;i>0;i--){
 		let j=Math.floor(Math.random()*(i+1));
@@ -649,9 +638,7 @@ function baronAi(){
 		indexArray[i]=indexArray[j];
 		indexArray[j]=temp;
 	}
-	console.log(indexArray);//シャッフル済みのインデックス
-	console.log(indexArray[0]);
-	
+		
 	console.log("バロンの合法手："+gouhousyuArray);
 	console.log("バロンの合法手の評価値："+candidateEvaluation);
 	console.log("バロンの合法手の評価値の最大値："+maxEvaluationValue);
@@ -660,27 +647,100 @@ function baronAi(){
 	return baronAi;
 }
 
-//AIランダム着手
-function randomAi(){
-	setGouhousyuArray();//合法手の確認
-	let randomIndex=Math.floor(Math.random()*gouhousyuArray.length);
-	let randomAi=gouhousyuArray[randomIndex];
-	console.log("ランダムAI着手:"+randomAi);
-	return randomAi;
+//局面から合法手を仮想的に動かす。
+function virtualMove(startingPoint){
+	let virtualGameRecord=Object.assign({},gameRecord);//ゲームレコードのコピー
+	//console.log(virtuaGameRecord);
+//console.log('着手'+startingPoint);
+	let switchArray,gameRecordStone,targetDan,targetSuji,checkDan,checkSuji,checkMasu,temp;
+	let turnOverFlg=false;//反転動作確認に使用
+	let turnOverStoneArray=[];
+	let useBlackArray=['black','white'];//手番黒用
+	let useWhiteArray=['white','black'];//手番白用
+	if(Game.teban=='黒(あなた)'){
+		switchArray=useBlackArray;
+		gameRecordStone='black';
+	}else if(Game.teban=='白(バロン)'){
+		switchArray=useWhiteArray;
+		gameRecordStone='white';
+	}
+	//着手したマスに石を置く。
+	virtualGameRecord[startingPoint]=gameRecordStone;
+	targetDan=Number(startingPoint.substr(1,1));//二文字目の段の切り出し
+	targetSuji=Number(startingPoint.substr(3,1));//四文字目の筋の切り出し
+	for(let j=0;j<allDirectionArray.length;j++){
+		turnOverFlg=false;//反転動作確認に使用
+		checkDan=targetDan;
+		checkSuji=targetSuji;
+		while(true){
+			checkDan+=allDirectionArray[j][0];
+			checkSuji+=allDirectionArray[j][1];
+			checkMasu='d'+String(checkDan)+'s'+String(checkSuji);
+			if((checkDan==0)||(checkSuji==0)||(checkDan==9)||(checkSuji==9)){
+				turnOverStoneArray.length=0;
+				break;//盤外であれば抜ける
+			}
+			//盤内であれば
+			if(virtualGameRecord[checkMasu]=='None'){
+				turnOverStoneArray.length=0;
+				break;//一マス先に石がなければ抜ける
+			}
+			if((turnOverFlg==false)&&(virtualGameRecord[checkMasu]==switchArray[0])){
+				//[0]:自石
+				turnOverStoneArray.length=0;
+				break;//間にライバルの石がない＆一マス先が自石ならぬける
+			}
+			if(virtualGameRecord[checkMasu]==switchArray[1]){
+				//[1]:ライバルの石
+				turnOverFlg=true;
+				turnOverStoneArray.push(checkMasu);//反転対象の石が置かれているマスを配列に格納する
+				continue;//マスの確認方向を一マス伸ばし処理を続ける
+			}
+			if((turnOverFlg==true)&&(virtualGameRecord[checkMasu]==switchArray[0])){
+				//[0]:自石
+				//配列をもとに反転させる
+				for(let i=0;i<turnOverStoneArray.length;i++){
+					virtualGameRecord[turnOverStoneArray[i]]=gameRecordStone;
+				}
+				turnOverFlg=false//フラグをFalseに戻す
+				break//ループを抜ける
+			}
+		}
+	}
+//console.log('virtual');
+//console.log(virtualGameRecord);//一手仮想的に動かした後の局面
+	return virtualGameRecord;//一手仮想的に動かした後の局面
 }
 
-//基本AI
-function basicAi(){
-	//評価関数
-	let evaluationValue=[[0,0,0,0,0,0,0,0,0],
-						[0,120,-20,20,5,5,20,-20,120],
-						[0,-20,-40,-5,-5,-5,-5,-40,-20],
-						[0,20,-5,15,3,3,15,-5,20],
-						[0,5,-5,3,3,3,3,-5,5],
-						[0,5,-5,3,3,3,3,-5,5],
-						[0,20,-5,15,3,3,15,-5,20],
-						[0,-20,-40,-5,-5,-5,-5,-40,-20],
-						[0,120,-20,20,5,5,20,-20,120],
-						[0,0,0,0,0,0,0,0,0]
+//指定局面の評価値を返す。
+function returnEvaluationValue(targetGameRecord){
+	//評価点を格納した配列
+	let evaluationArray=[[0,0,0,0,0,0,0,0,0],
+						[0,250,-50,50,10,10,50,-50,250],
+						[0,-50,-100,-10,-10,-10,-10,-100,-100],
+						[0,50,-10,30,5,5,30,-10,50],
+						[0,10,-10,5,5,5,5,-10,10],
+						[0,10,-10,5,5,5,5,-10,10],
+						[0,50,-10,30,5,5,30,-10,50],
+						[0,-50,-100,-10,-10,-10,-10,-100,-100],
+						[0,250,-50,50,10,10,50,-50,250],
 						];
+	let evaluationValue=0;//指定局面の評価値
+	
+	for(let i=0;i<gameRecordKeys.length;i++){
+		if(targetGameRecord[gameRecordKeys[i]]=="black"){
+			let indexY=Number(gameRecordKeys[i].substr(1,1));//二文字目の段の切り出し
+			let indexX=Number(gameRecordKeys[i].substr(3,1));//四文字目の筋の切り出し
+			//console.log("評価点は："+evaluationArray[indexY][indexX])
+			evaluationValue-=evaluationArray[indexY][indexX];
+		}
+		if(targetGameRecord[gameRecordKeys[i]]=="white"){
+			let indexY=Number(gameRecordKeys[i].substr(1,1));//二文字目の段の切り出し
+			let indexX=Number(gameRecordKeys[i].substr(3,1));//四文字目の筋の切り出し
+			evaluationValue+=evaluationArray[indexY][indexX];
+		}
+	}
+	//console.log("バロンからみた指定局面の評価値"+evaluationValue);
+	return evaluationValue;
 }
+
