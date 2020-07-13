@@ -97,7 +97,7 @@ function userCheck(){
 
 //開始時の表示
 function startDisplay(){
-	document.getElementById("com").innerHTML="com：バロン Lv4";//comのversion
+	document.getElementById("com").innerHTML="COM：バロン Lv4";//comのversion
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
