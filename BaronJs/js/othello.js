@@ -40,6 +40,7 @@ var Page ={ cy:0,//現在のy
 //ゲームの情報
 var Game ={ teban:"黒(あなた)",
 			rivalTeban:"白(バロン)",//逆の手番
+			virtualTeban:"",//仮想的に動かす手番
 			winner:"",
 			count:1,//何手目か？
 			blackNum:2,//黒石の数
@@ -97,7 +98,7 @@ function userCheck(){
 
 //開始時の表示
 function startDisplay(){
-	document.getElementById("com").innerHTML="COM：バロン Lv4";//comのversion
+	document.getElementById("com").innerHTML="COM：バロン Ver4";//comのversion
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
@@ -207,6 +208,7 @@ function touchstart(e){
 				touchScreen(touch.clientX,touch.clientY);
 			}
 		}else{
+		
 			throw new Error("throw new Error");
 		}
 	}
@@ -214,12 +216,12 @@ function touchstart(e){
 		console.log("catch(e):ゲーム終了しています");
 	}
 }
+
 //start()系終了---------------------------------------------------------------------------------------
 
 //touchScreen()系開始---------------------------------------------------------------------------------
 //タッチされた時のイベントの処理
 function touchScreen(tx,ty){
-
 	if((Flg.gameEnd==true)||(Flg.pass==true)||(Flg.renzokuPass==true)){
 	//ゲーム終了。又は、パスをするしかない状態。
 		return;
@@ -233,6 +235,7 @@ function touchScreen(tx,ty){
 	if((Flg.currentMasuInout==true)&&(gameRecord[Game.currentMasu]=='None')&&(gouhousyuArray.indexOf(Game.currentMasu)!=-1)){
 		turnOverStone(Game.currentMasu);
 		changeTeban();//手番の切り替え
+		tyakusyuEnd();//着手終了後の処理
 		winLoseJudgment(0);//決着が着いているか？
 		if(Flg.gameEnd==true){
 			endDisplay();
@@ -349,7 +352,16 @@ function turnOverStone(startingPoint){
 }
 
 //手番の合法手を生成する。
-function setGouhousyuArray(){
+function setGouhousyuArray(type,typeRecord){
+	let targetRecord;
+	if(type==1){
+		console.log("☆");
+		console.log(typeRecord);
+		targetRecord=typeRecord;
+		console.log("☆");
+	}else{
+		targetRecord=gameRecord;
+	}
 	let tempGouhousyuArray=[];
 	let tagetDan,tagetSuji,checkDan,checkSuji,checkMasu;
 	let existRivalStoneFlg=false;//ライバルの石が間に存在するか？
@@ -363,7 +375,7 @@ function setGouhousyuArray(){
 	}
 	for(let i=0;i<gameRecordKeys.length;i++){
 		//gameRecordKeys[i]:合法手確認の対象のマス
-		if(gameRecord[gameRecordKeys[i]]!='None'){
+		if(targetRecord[gameRecordKeys[i]]!='None'){
 			continue;//合法手確認の対象のマスに石があれば抜ける
 		}
 		targetDan=Number(gameRecordKeys[i].substr(1,1));//二文字目の段の切り出し
@@ -380,19 +392,19 @@ function setGouhousyuArray(){
 					break;//盤外であれば抜ける
 				}else{
 					//盤内であれば
-					if(gameRecord[checkMasu]=='None'){
+					if(targetRecord[checkMasu]=='None'){
 						break;//一マス先に石がなければ抜ける
 					}
-					if((existRivalStoneFlg==false)&&(gameRecord[checkMasu]==switchArray[0])){
+					if((existRivalStoneFlg==false)&&(targetRecord[checkMasu]==switchArray[0])){
 						//[0]:自石
 						break;//#間にライバルの石がない＆一マス先が自石ならぬける
 					}
-					if(gameRecord[checkMasu]==switchArray[1]){
+					if(targetRecord[checkMasu]==switchArray[1]){
 						//[1]:ライバルの石
 						existRivalStoneFlg=true;
 						continue;//マスの確認方向を一マス伸ばし処理を続ける
 					}
-					if((existRivalStoneFlg==true)&&(gameRecord[checkMasu]==switchArray[0])){
+					if((existRivalStoneFlg==true)&&(targetRecord[checkMasu]==switchArray[0])){
 						//[0]:自石
 						tempGouhousyuArray.push(gameRecordKeys[i]);//合法手を配列に格納
 						existRivalStoneFlg=false;//フラグをFalseに戻す
@@ -409,7 +421,7 @@ function setGouhousyuArray(){
 	//console.log(gouhousyuArray);
 }
 
-//着手終了の処理
+//手番の切り替え
 function changeTeban(){
 	if(Game.teban=='黒(あなた)'){
 		Game.teban='白(バロン)';
@@ -418,12 +430,15 @@ function changeTeban(){
 		Game.teban='黒(あなた)';
 		Game.rivalTeban='白(バロン)';
 	}
+}
+
+//着手終了後の処理
+function tyakusyuEnd(){
 	Game.count++;
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	checkStoneNum();
 	Flg.pass=false;//連続パスをしなかった。
-	return;
 }
 
 //着手終了時の石の数の確認＆表示
@@ -599,9 +614,14 @@ function inputContinue(){
 //AI着手
 function aiTyakusyu(){
 	setTimeout(function(){
-//console.log("○秒後に着手");
-		turnOverStone(baronAiLv4());//引数を変えることでAIの強さ変更が可能
+		//console.log("○秒後に着手");
+checkGouhousyuNum();//白の着手前の合法手の数
+tyakusyuMae();
+//		turnOverStone(baronAiVer4());//引数を変えることでAIの強さ変更が可能
+//checkGouhousyuNum();//白の着手後の合法手の数
+
 		changeTeban();//手番の切り替え
+		tyakusyuEnd();//着手終了後の処理
 		winLoseJudgment(0);//決着が着いているか？
 		if(Flg.gameEnd==true){
 			endDisplay();
@@ -610,29 +630,64 @@ function aiTyakusyu(){
 	},700);
 }
 
-//バロンLv4:1手先読み
-function baronAiLv4(){
+//バロンVer5:評価基準の見直し
+function tyakusyuMae(){
+	setGouhousyuArray();//合法手の確認
+	console.log("test："+gouhousyuArray);
+	for(let i=0;i<gouhousyuArray.length;i++){
+		let virtualGameRecord=virtualMove(gouhousyuArray[i]);
+		setGouhousyuArray(1,virtualGameRecord);//仮想的に動かした後の合法手の確認
+		console.log(gouhousyuArray[i]+"を仮想的に着手した後の合法手の数:"+gouhousyuArray.length);
+		console.log(virtualGameRecord);
+	}
+}
+
+//合法手の数の確認
+function checkGouhousyuNum(){
+	setGouhousyuArray();//合法手の確認
+	console.log(Game.teban+"の合法手の数"+gouhousyuArray.length);
+	console.log(Game.teban+"の合法手"+gouhousyuArray);
+	//changeTeban();//手番の切り替え
+	//setGouhousyuArray();//合法手の確認
+	//console.log(Game.teban+"の合法手の数"+gouhousyuArray.length);
+	//console.log(Game.teban+"の合法手"+gouhousyuArray);
+	//changeTeban();//手番の切り替え
+}
+
+//仮想的に動かした後の合法手の数の確認
+function virtual(){
+	setGouhousyuArray();//合法手の確認
+	console.log(Game.teban+"の合法手"+gouhousyuArray);
+
+}
+
+
+
+//バロンVer4:1手先読み
+function baronAiVer4(){
 	let candidateEvaluation=[];//候補手の評価値を格納する配列
 	let indexArray=[];//候補手のインデックスを格納する配列
 	setGouhousyuArray();//合法手の確認
 	//console.log(gouhousyuArray);
 	
 	for(let i=0;i<gouhousyuArray.length;i++){
-		let virtualGameRecord=virtualMove(gouhousyuArray[i]);
+		let virtualGameRecord=virtualMove(gouhousyuArray[i]);//一手仮想的に動かした後の局面
 		//console.log(virtualGameRecord);
+		
+		
 		let evaluationValue=returnEvaluationValue(virtualGameRecord);
 		//console.log("評価値"+evaluationValue);
 		candidateEvaluation.push(evaluationValue);
 	}
 	let maxEvaluationValue=candidateEvaluation.reduce((a,b)=>Math.max(a,b));//評価値から最大値を検索
-console.log("候補手を動かした後のMax評価値:"+maxEvaluationValue);
+	console.log("候補手を動かした後のMax評価値:"+maxEvaluationValue);
 	
 	for(let i=0;i<candidateEvaluation.length;i++){
 		if(candidateEvaluation[i]==maxEvaluationValue){
 			indexArray.push(i);
 		}
 	}
-console.log("候補手のインデックス："+indexArray);
+	console.log("候補手のインデックス："+indexArray);
 	//indexArray配列をシャッフルする -->
 	for(let i=indexArray.length-1;i>0;i--){
 		let j=Math.floor(Math.random()*(i+1));
@@ -640,7 +695,6 @@ console.log("候補手のインデックス："+indexArray);
 		indexArray[i]=indexArray[j];
 		indexArray[j]=temp;
 	}
-		
 	console.log("バロンの合法手："+gouhousyuArray);
 	console.log("バロンの合法手の評価値："+candidateEvaluation);
 	console.log("バロンの合法手の評価値の最大値："+maxEvaluationValue);
@@ -651,9 +705,11 @@ console.log("候補手のインデックス："+indexArray);
 
 //局面から合法手を仮想的に動かす。
 function virtualMove(startingPoint){
-	let virtualGameRecord=Object.assign({},gameRecord);//ゲームレコードのコピー
+	let virtualGameRecord;//ゲームレコードのコピー
+	virtualGameRecord=Object.assign({},gameRecord);//ゲームレコードのコピー
+
 	//console.log(virtuaGameRecord);
-//console.log('着手'+startingPoint);
+	console.log('着手'+startingPoint);
 	let switchArray,gameRecordStone,targetDan,targetSuji,checkDan,checkSuji,checkMasu,temp;
 	let turnOverFlg=false;//反転動作確認に使用
 	let turnOverStoneArray=[];
@@ -668,6 +724,7 @@ function virtualMove(startingPoint){
 	}
 	//着手したマスに石を置く。
 	virtualGameRecord[startingPoint]=gameRecordStone;
+
 	targetDan=Number(startingPoint.substr(1,1));//二文字目の段の切り出し
 	targetSuji=Number(startingPoint.substr(3,1));//四文字目の筋の切り出し
 	for(let j=0;j<allDirectionArray.length;j++){
@@ -709,8 +766,8 @@ function virtualMove(startingPoint){
 			}
 		}
 	}
-//console.log('virtual');
-//console.log(virtualGameRecord);//一手仮想的に動かした後の局面
+	console.log('virtual');
+	console.log(virtualGameRecord);//一手仮想的に動かした後の局面
 	return virtualGameRecord;//一手仮想的に動かした後の局面
 }
 
