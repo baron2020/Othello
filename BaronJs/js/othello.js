@@ -610,7 +610,7 @@ var baronAI={'choice':''//着手
 
 //AI着手
 function aiTyakusyu(){
-	readBaronAI("js/baronAi.js");
+	readBaronAI("js/baronAI.js");
 	waitBaronAI();//baronAIを取得
 }
 
