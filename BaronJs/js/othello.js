@@ -50,10 +50,10 @@ var Game ={ teban:"黒(あなた)",
 //フラグ
 var Flg = { gameEnd:false,//対局が終了しているか？
 			canBePlaced:true,//プレイヤーが石を置ける状態か？
+			blackPass:false,//黒がパスするしかない状態か？
+			renzokuPass:false,//連続パス判定に使用。
 			endMode:false,//false:対局モード中
 			currentMasuInout:false,//現在のマスは盤内か？
-			pass:false,//パスをするしかない状態か？
-			renzokuPass:false,//連続パス判定に使用。
 			};
 
 //スタート
@@ -98,16 +98,16 @@ function userCheck(){
 
 //開始時の表示
 function startDisplay(){
-	document.getElementById("com").innerHTML="COM：バロン Ver4";//comのversion
+	document.getElementById("com").innerHTML="COM：バロン Ver4.0721";//comのversion
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
 	document.getElementById("whiteNum").innerHTML="白石："+Game.whiteNum;//白石の数
-	inpPass="<input class='con'id='re1' type='button' value='パス'onClick='inputPass()'style='width:12%'>";
-	inpResign="<input class='con'id=='de1' type='button' value='投了'onClick='inputResign()'style='width:12%'>";
+	inpPass="<input class='con'id='re1' type='button' value='パス'onClick='passButton()'style='width:12%'>";
+	inpResign="<input class='con'id=='de1' type='button' value='投了'onClick='resignButton()'style='width:12%'>";
 	inpContinue="<input class='con'id='re1' type='button' value='最初に戻る'onClick='inputContinue()'style='width:24%'>";
-	//inpLogDelete="<input class='con'id=='de1' type='button' value='ログ削除'onClick='inputLogDelete()'style='width:20%'>";
-	document.getElementById("consider").innerHTML='　'+inpPass+'　'+inpResign+'　'+inpContinue;
+	inpLogDelete="<input class='con'id=='de1' type='button' value='ログ削除'onClick='inputLogDelete()'style='width:20%'>";
+	document.getElementById("consider").innerHTML='　'+inpPass+'　'+inpResign+'　'+inpContinue+'　'+inpLogDelete;
 }
 
 //中央メイン盤の作成
@@ -189,7 +189,6 @@ function setUp(){
 function mousedown(e){
 	//try{
 		if(Flg.gameEnd==false){
-		
 			if(Flg.canBePlaced==true){
 				touchScreen(e.clientX,e.clientY);
 			}
@@ -227,8 +226,8 @@ function touchstart(e){
 //touchScreen()系開始---------------------------------------------------------------------------------
 //タッチされた時のイベントの処理
 function touchScreen(tx,ty){
-	if((Flg.gameEnd==true)||(Flg.pass==true)||(Flg.renzokuPass==true)){
-	//ゲーム終了。又は、パスをするしかない状態。
+	if((Flg.gameEnd==true)||(Flg.blackPass==true)){
+		//ゲーム終了。又は、パスをするしかない状態。
 		return;
 	}
 	setGouhousyuArray();//合法手の確認
@@ -239,24 +238,35 @@ function touchScreen(tx,ty){
 	//タッチした箇所が盤内＆石のない箇所＆合法手
 	if((Flg.currentMasuInout==true)&&(gameRecord[Game.currentMasu]=='None')&&(gouhousyuArray.indexOf(Game.currentMasu)!=-1)){
 		turnOverStone(Game.currentMasu);
-		Flg.canBePlaced=false;//プレイヤーが石を置ける状態か？
+		Flg.canBePlaced=false;//プレイヤーが石を置けない状態にする。
 		changeTeban();//手番の切り替え
+		tyakusyuEnd();//着手終了後の処理
 		winLoseJudgment(0);//決着が着いているか？
 		if(Flg.gameEnd==true){
 			endDisplay();
+			return;
+		}else{
+			//console.log("254:"+Game.teban);
+			setGouhousyuArray();//白(バロン)の合法手の確認
+			if((gouhousyuArray.length==0)){
+				//白のパス。
+				setTimeout(function(){	
+					commitPass(1);//白のパスの確認
+				},1000);
+			}else{
+				document.getElementById("passAdvice").innerHTML="";//パス進言の削除
+				Flg.blackPass=false;
+				Flg.renzokuPass=false;//合法手がある。
+				
+				//AIファイルの読みこみからAI着手
+				readBaronAI("js/baronAI.js");
+				tyakusyuBaronAI();//baronAIの着手
+				return;
+			}
 		}
 	}else{
 		//盤内,合法手でなければリターン
 		return;
-	}
-	checkPass();//パスの確認
-	if(Flg.pass==true){
-		//白(バロン)がパスをするしかない状態。
-		inputPass();
-		return;
-	}
-	if(Game.teban=='白(バロン)'){
-		aiTyakusyu();
 	}
 }
 
@@ -411,12 +421,11 @@ function setGouhousyuArray(){
 	}
 	//配列から重複した値を削除する
 	gouhousyuArray=tempGouhousyuArray.filter((x,i,self)=>self.indexOf(x)===i);
-	//重複の削除
 	//console.log("合法手");
 	//console.log(gouhousyuArray);
 }
 
-//着手終了の処理
+//手番の切り替え
 function changeTeban(){
 	if(Game.teban=='黒(あなた)'){
 		Game.teban='白(バロン)';
@@ -425,12 +434,17 @@ function changeTeban(){
 		Game.teban='黒(あなた)';
 		Game.rivalTeban='白(バロン)';
 	}
+}
+
+//着手終了後のディスプレイ処理
+function tyakusyuEnd(){
 	Game.count++;
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	checkStoneNum();
-	Flg.pass=false;//連続パスをしなかった。
-	return;
+	//連続パスをしなかった。
+	Flg.blackPass=false;
+	Flg.renzokuPass=false;
 }
 
 //着手終了時の石の数の確認＆表示
@@ -452,32 +466,6 @@ function checkStoneNum(){
 	Game.whiteNum=tempWhiteNum;
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
 	document.getElementById("whiteNum").innerHTML="白石："+Game.whiteNum;//白石の数
-}
-
-//パスの確認
-function checkPass(){
-	if(Flg.gameEnd==false){
-		setGouhousyuArray();//合法手の確認
-		if(gouhousyuArray.length==0){
-			if(Game.teban=='黒(あなた)'){
-				setTimeout(function(){
-					alert("黒(あなた)\n「合法手がありません。パスしてください。」");
-					document.getElementById("passAdvice").innerHTML="パスしてください。";//パス進言
-				},1100);
-			}else if(Game.teban=='白(バロン)'){
-				setTimeout(function(){
-					alert("白(バロン)\n「合法手がありません。パスします。」");
-					document.getElementById("passAdvice").innerHTML="パスしました。";//パス進言
-				},1100);
-			}
-			Flg.pass=true;//パスをするしかない状態。
-		}else{
-			document.getElementById("passAdvice").innerHTML="";//パス進言の削除
-			Flg.pass=false;//合法手がある。
-		}
-		gouhousyuArray.length=0;
-	}
-	return;
 }
 
 //着手完了後に、勝敗が着いているか調べる。勝敗が着いている場合は、手番テキストを更新し、終了フラグを立てる。
@@ -535,8 +523,55 @@ function endDisplay(){
 	document.getElementById("passAdvice").innerHTML="";//パス進言の削除
 }
 
+
+//パスをまとめた処理
+function commitPass(type){
+	//type0:黒,type1:白
+	//blackPass:false,//黒がパスするしかない状態か？
+	if(type==0){
+			alert("黒(あなた)\n「合法手がありません。パスしてください。」");
+			document.getElementById("passAdvice").innerHTML="パスしてください。";//パス進言
+			Flg.blackPass=true;//黒がパスをするしかない状態。
+	}else if(type==1){
+			alert("白(バロン)\n「合法手がありません。パスします。」");
+			document.getElementById("passAdvice").innerHTML="パスしました。";//パス進言
+			changeTeban();
+			Game.count--;
+			document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
+			document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
+			checkRenzokuPass(0);
+			return;
+	}
+}
+
+//連続パス確認
+function checkRenzokuPass(type){
+	//type0:黒,type1:白
+	setGouhousyuArray();
+	//テスト用：gouhousyuArray.length=0;
+	if(gouhousyuArray.length==0){
+		//連続パス判定によりゲームを終了
+		if(type==0){
+			alert("黒(あなた)\n「合法手がありません。パスしてください。」");
+			document.getElementById("passAdvice").innerHTML="パスしてください。";//パス進言の削除
+			Flg.blackPass=true;//黒に合法手がない。
+			Flg.renzokuPass=true;//連続パス判定
+		}else if(type==1){
+			alert("白(バロン)\n「合法手がありません。パスします。」");
+			alert("連続パスによりゲームを終了します。");
+			//document.getElementById("passAdvice").innerHTML="連続パスによりゲームを終了します。";//連続パス
+			winLoseJudgment(1);//連続パスでゲーム終了
+			endDisplay();
+		}
+	}else{
+		Flg.blackPass=false;
+		Flg.renzokuPass=false;//合法手がある。
+	}
+	return;
+}
+
 //パスボタン
-function inputPass(){
+function passButton(){
 	if(Flg.gameEnd==true){
 		return;
 	}
@@ -548,37 +583,33 @@ function inputPass(){
 		return;
 	}
 	setGouhousyuArray();
+	//テスト用：gouhousyuArray.length=0;
 	if(gouhousyuArray.length!=0){
 		alert("黒(あなた)\n「合法手があります。パス出来ません。」");
 		return;
-	}
-	changeTeban();
-	Game.count--;
-	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
-	document.getElementById("passAdvice").innerHTML="";//パス進言の削除
-	
-	setGouhousyuArray();
-	if(gouhousyuArray.length==0){
-		if(Game.teban=='黒(あなた)'){
-			//連続パスによりゲーム終了
-			alert("黒(あなた)\n「合法手がありません。パスしてください。」");
-			document.getElementById("passAdvice").innerHTML="パスしてください。";//パス進言の削除
-			Flg.renzokuPass=true;//連続パス判定
-			return;
-		}else if(Game.teban=='白(バロン)'){
-			//連続パスによりゲーム終了
-			alert("白(バロン)\n「合法手がありません。パスします。」");
-			alert("連続パスによりゲームを終了します。");
-			//document.getElementById("passAdvice").innerHTML="連続パスによりゲームを終了します。";//連続パス
-			winLoseJudgment(1);//連続パスでゲーム終了
-			endDisplay();
+	}else{
+		changeTeban();
+		document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
+		document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
+		checkRenzokuPass(1);//連続パス確認
+		if(gouhousyuArray.length==0){
+			console.log("連続パスにより終了します");
+		}else{
+			//白の着手
+			Flg.canBePlaced=false;//プレイヤーが石を置けない状態にする。
+			document.getElementById("passAdvice").innerHTML="";//パス進言の削除
+			Flg.blackPass=false;
+			Flg.renzokuPass=false;//合法手がある。
+			//AIファイルの読みこみからAI着手
+			readBaronAI("js/baronAI.js");
+			tyakusyuBaronAI();//baronAIの着手
 			return;
 		}
 	}
 }
 
 //投了ボタン
-function inputResign(){
+function resignButton(){
 	if(Flg.gameEnd==true){
 		return;
 	}
@@ -599,20 +630,12 @@ function inputContinue(){
 }
 
 //コンソール削除
-//function inputLogDelete(){
-//	console.clear();
-//}
-
-
-//バロンAI関連
-var baronAI={'choice':''//着手
-			};
-
-//AI着手
-function aiTyakusyu(){
-	readBaronAI("js/baronAI.js");
-	waitBaronAI();//baronAIを取得
+function inputLogDelete(){
+	console.clear();
 }
+
+//バロンAI関連---------------------------------------------------------------------------------------
+var baronAI={'choice':''};
 
 //"js/baronAi.js":AIファイル読み込み
 function readBaronAI(url){
@@ -636,17 +659,17 @@ function loaded(){
 	console.log("バロンAI："+baronAI.choice);
 }
 
-//バロンAIの着手が返ってくるまで待機する。
-function waitBaronAI(){
+//バロンAIの着手。
+function tyakusyuBaronAI(){
 	//空白＆nullチェック
-	let findBaronAI=function(){
+	let waitBaronAI=function(){
 					if(!baronAI.choice){
 						//バロンの着手が返ってきていない(baronAIが空白＆nullである)
 						console.log("待機しています。");
 					}
 				}
 	let id =setInterval(function(){
-							findBaronAI();
+							waitBaronAI();
 							if(baronAI.choice){
 								clearInterval(id);
 								console.log("バロンの着手を受け取りました。");
@@ -657,15 +680,27 @@ function waitBaronAI(){
 										TagScript[1].remove();
 									}
 									changeTeban();//手番の切り替え
+									tyakusyuEnd();//着手終了後の処理
 									winLoseJudgment(0);//決着が着いているか？
 									if(Flg.gameEnd==true){
 										endDisplay();
 										return;
 									}else{
-										checkPass();//パスの確認
-										Flg.canBePlaced=true;//プレイヤーが石を置ける状態か？
-										return;
+										setGouhousyuArray();//黒の合法手の確認
+										if((gouhousyuArray.length==0)){
+											//黒のパス。
+											setTimeout(function(){
+												commitPass(0);//黒のパス
+											},1000);
+										}else{
+											document.getElementById("passAdvice").innerHTML="";//パス進言の削除
+											Flg.blackPass=false;
+											Flg.renzokuPass=false;//合法手がある。
+											Flg.canBePlaced=true;//プレイヤーが石を置ける状態か？
+											return;
+										}
 									}
-							},700);
-						}},200);
+								},700);
+							}},200);
 }
+

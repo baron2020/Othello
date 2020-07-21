@@ -21,6 +21,7 @@ function baronAiLv4(){
 		//console.log("評価値"+evaluationValue);
 		candidateEvaluation.push(evaluationValue);
 	}
+	
 	let maxEvaluationValue=candidateEvaluation.reduce((a,b)=>Math.max(a,b));//評価値から最大値を検索
 	//console.log("候補手を動かした後のMax評価値:"+maxEvaluationValue);
 	
