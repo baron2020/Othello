@@ -98,7 +98,7 @@ function userCheck(){
 
 //開始時の表示
 function startDisplay(){
-	document.getElementById("com").innerHTML="COM：バロン Ver4.0721.20";//comのversion
+	document.getElementById("com").innerHTML="COM：バロン Ver5.0723";//comのversion
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
@@ -106,8 +106,8 @@ function startDisplay(){
 	inpPass="<input class='con'id='re1' type='button' value='パス'onClick='passButton()'style='width:12%'>";
 	inpResign="<input class='con'id=='de1' type='button' value='投了'onClick='resignButton()'style='width:12%'>";
 	inpContinue="<input class='con'id='re1' type='button' value='最初に戻る'onClick='inputContinue()'style='width:24%'>";
-	inpLogDelete="<input class='con'id=='de1' type='button' value='ログ削除'onClick='inputLogDelete()'style='width:20%'>";
-	document.getElementById("consider").innerHTML='　'+inpPass+'　'+inpResign+'　'+inpContinue+'　'+inpLogDelete;
+	//inpLogDelete="<input class='con'id=='de1' type='button' value='ログ削除'onClick='inputLogDelete()'style='width:20%'>";
+	document.getElementById("consider").innerHTML='　'+inpPass+'　'+inpResign+'　'+inpContinue;
 }
 
 //中央メイン盤の作成
@@ -261,7 +261,7 @@ function touchScreen(tx,ty){
 				Flg.renzokuPass=false;//合法手がある。
 				
 				//AIファイルの読みこみからAI着手
-				readBaronAI("js/baronAI.js");
+				readBaronAI("js/baronAI5.js");
 				tyakusyuBaronAI();//baronAIの着手
 				return;
 			}
@@ -639,7 +639,7 @@ function inputLogDelete(){
 //バロンAI関連---------------------------------------------------------------------------------------
 var baronAI={'choice':''};
 
-//"js/baronAi.js":AIファイル読み込み
+//"js/baronAI.js":AIファイル読み込み
 function readBaronAI(url){
 	let TagScript=document.getElementsByTagName("script");//スクリプトタグ
 	let script=document.createElement('script');
@@ -657,7 +657,7 @@ function readBaronAI(url){
 
 //"js/baronAi.js"がロードされたら実行される。
 function loaded(){
-	baronAI.choice=baronAiLv4();
+	baronAI.choice=baronAIVer5();
 	console.log("バロンAI："+baronAI.choice);
 }
 
