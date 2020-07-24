@@ -98,7 +98,7 @@ function userCheck(){
 
 //開始時の表示
 function startDisplay(){
-	document.getElementById("com").innerHTML="COM：バロン Ver5.0724.14";//comのversion
+	document.getElementById("com").innerHTML="COM：バロン Ver6.0724.22";//comのversion
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
@@ -261,7 +261,7 @@ function touchScreen(tx,ty){
 				Flg.renzokuPass=false;//合法手がある。
 				
 				//AIファイルの読みこみからAI着手
-				readBaronAI("js/baronAI5.js");
+				readBaronAI("js/baronAI6.js");
 				tyakusyuBaronAI();//baronAIの着手
 				return;
 			}
@@ -657,7 +657,7 @@ function readBaronAI(url){
 
 //"js/baronAi.js"がロードされたら実行される。
 function loaded(){
-	baronAI.choice=baronAIVer5();
+	baronAI.choice=baronAIVer6();
 	console.log("バロンAI："+baronAI.choice);
 }
 

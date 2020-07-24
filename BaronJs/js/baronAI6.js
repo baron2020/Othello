@@ -1,17 +1,16 @@
-﻿//バロンVer5:大幅改良
-
+﻿//バロンVer6
 //合法手の評価
-var virtualGouhousyuArray=[];//仮想的に動かした後の合法手
 var whiteGouhousyu=[];//白の合法手
 var blackGouhousyu=[];//黒の合法手
+var virtualGouhousyuArray=[];//一手仮想的に動かした後の合法手
 var virtualWhiteGouhousyu=[];//先読みしたの白の合法手
 var virtualBlackGouhousyu=[];//先読みしたの黒の合法手
 var hyoukaArray=[];//この配列の中の値が大きいインデックスを選ぶ
 
 loaded();//ロードされたら
 
-function baronAIVer5(){
-	checkGouhousyu();//お互いの合法手の確認
+function baronAIVer6(){
+	checkGouhousyu();//お互いの合法手の数の確認
 	checkVirtualGouhousyu();
 
 	let index=hyouka();
@@ -26,14 +25,12 @@ function baronAIVer5(){
 //着手前の合法手の数の確認
 function checkGouhousyu(){
 	setGouhousyuArray();//合法手の確認
-	//console.log(Game.teban+"の合法手の数"+gouhousyuArray.length);
 	whiteGouhousyu=Array.from(gouhousyuArray);//白の合法手
-	console.log(Game.teban+"の合法手"+whiteGouhousyu);
+	console.log("白の合法手"+whiteGouhousyu);
 	changeTeban();//手番の切り替え
 	setGouhousyuArray();//合法手の確認
-	//console.log(Game.teban+"の合法手の数"+gouhousyuArray.length);
 	blackGouhousyu=Array.from(gouhousyuArray);//黒の合法手
-	console.log(Game.teban+"の合法手"+blackGouhousyu);
+	console.log("黒の合法手"+blackGouhousyu);
 	changeTeban();//手番の切り替え
 }
 
@@ -50,8 +47,6 @@ function checkVirtualGouhousyu(){
 	console.log(virtualWhiteGouhousyu);
 	console.log("黒");
 	console.log(virtualBlackGouhousyu);
-	//let abc=["a","b","d7s7","d","e","d2s2"];
-	//console.log(deleteX(abc));
 }
 
 //局面から合法手を仮想的に動かす。
@@ -153,7 +148,6 @@ function resetArray(){
 	console.log(blackGouhousyu);
 	console.log(virtualWhiteGouhousyu);
 	console.log(virtualBlackGouhousyu);
-	console.log(virtualBlackGouhousyu);
 
 }
 
@@ -168,11 +162,9 @@ function hyouka(){
 	for(let i=0;i<virtualBlackGouhousyu.length;i++){
 		//console.log(i+"："+virtualBlackGouhousyu[i].length);
 		if(virtualBlackGouhousyu[i].length==0){
-			//console.log(i+"です");
 			return i;
 		}
 		if((virtualBlackGouhousyu[i].length==1)&&(checkX(virtualBlackGouhousyu[i]))){
-			//console.log(i+"です");
 			return i;
 		}
 	}
@@ -196,22 +188,23 @@ function hyouka(){
 	for(let i=0;i<whiteGouhousyu.length;i++){
 		console.log("白後"+i+" : "+virtualWhiteGouhousyu[i].length);
 		console.log("黒後"+i+" : "+virtualBlackGouhousyu[i].length);
-		let tempX;//Xを考慮
+		let valueX;//Xを考慮
 		if(XArray.indexOf(whiteGouhousyu[i])!=-1){
-			tempX=-1000;//Xである
+			valueX=-1000;//Xである
 		}else{
-			tempX=0;//Xでない
+			valueX=0;//Xでない
 		}
-		let tempLength1=virtualWhiteGouhousyu[i].length;
-		let tempLength2=virtualBlackGouhousyu[i].length;
-		//console.log(virtualWhiteGouhousyu[i]);
-		let tempSumiKouryo=sumiWatasanai(virtualBlackGouhousyu[i]);
-		let tempKouryoX=kouryoX(virtualWhiteGouhousyu[i]);
-		let tempValue1=(tempLength1*10);
-		let tempValue2=(tempLength2*(-10));
-		let value=tempValue1+tempValue2+tempSumiKouryo+tempKouryoX+tempX;
-		console.log("評価値："+value);
-		hyoukaArray.push(value);
+		
+		let vw=deleteX(virtualWhiteGouhousyu[i]);//Xを削除した白の合法手
+		let vb=deleteX(virtualBlackGouhousyu[i]);//Xを削除した黒の合法手
+		let value1=(vw.length*10);//白の合法手の数を考慮
+		let value2=(vb.length*(-20));//黒の合法手の数を考慮
+		let value3=sumiWatasanai(virtualBlackGouhousyu[i]);//黒の隅を考慮
+		
+		let hyoukaValue=value1+value2+value3+valueX;
+		//白,黒の着手前の合法手の数、着手後の合法手の数、着手後の黒の隅を考慮、白のXを考慮
+		console.log("評価値："+hyoukaValue);
+		hyoukaArray.push(hyoukaValue);
 	}
 	console.log("評価："+hyoukaArray);
 	let maxValue=hyoukaArray.reduce((a,b)=>Math.max(a,b));//評価値から最大値を検索
@@ -264,7 +257,7 @@ function deleteX(targetArray){
 	let XArray=['d2s2','d2s7','d7s2','d7s7'];//削除対象のX
 	for(let i=0;i<copyArray.length;i++){
 		if(XArray.indexOf(copyArray[i])!=-1){
-			continue;
+			continue;//存在する
 		}
 		returnArray.push(copyArray[i]);
 	}
