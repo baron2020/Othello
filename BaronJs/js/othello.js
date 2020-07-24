@@ -98,7 +98,7 @@ function userCheck(){
 
 //開始時の表示
 function startDisplay(){
-	document.getElementById("com").innerHTML="COM：バロン Ver5.0723";//comのversion
+	document.getElementById("com").innerHTML="COM：バロン Ver5.0724.14";//comのversion
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
@@ -603,7 +603,7 @@ function passButton(){
 			Flg.canBePlaced=false;//プレイヤーが石を置けない状態にする。
 			Flg.renzokuPass=false;//合法手がある。
 			//AIファイルの読みこみからAI着手
-			readBaronAI("js/baronAI.js");
+			readBaronAI("js/baronAI5.js");
 			tyakusyuBaronAI();//baronAIの着手
 			return;
 		}
@@ -689,6 +689,10 @@ function tyakusyuBaronAI(){
 										return;
 									}else{
 										setGouhousyuArray();//黒の合法手の確認
+										//テスト：gouhousyuArray.length=0;
+										//if(Game.count>8){
+										//	gouhousyuArray.length=0;
+										//}
 										if((gouhousyuArray.length==0)){
 											//黒のパス。
 											setTimeout(function(){
