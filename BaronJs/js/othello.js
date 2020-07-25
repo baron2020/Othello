@@ -98,7 +98,7 @@ function userCheck(){
 
 //開始時の表示
 function startDisplay(){
-	document.getElementById("com").innerHTML="COM：バロン Ver6.0724.22";//comのversion
+	document.getElementById("com").innerHTML="COM：バロン Ver7.0726.00";//comのversion
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
@@ -261,7 +261,7 @@ function touchScreen(tx,ty){
 				Flg.renzokuPass=false;//合法手がある。
 				
 				//AIファイルの読みこみからAI着手
-				readBaronAI("js/baronAI6.js");
+				readBaronAI("js/baronAI7.js");
 				tyakusyuBaronAI();//baronAIの着手
 				return;
 			}
@@ -603,7 +603,7 @@ function passButton(){
 			Flg.canBePlaced=false;//プレイヤーが石を置けない状態にする。
 			Flg.renzokuPass=false;//合法手がある。
 			//AIファイルの読みこみからAI着手
-			readBaronAI("js/baronAI5.js");
+			readBaronAI("js/baronAI7.js");
 			tyakusyuBaronAI();//baronAIの着手
 			return;
 		}
@@ -657,23 +657,35 @@ function readBaronAI(url){
 
 //"js/baronAi.js"がロードされたら実行される。
 function loaded(){
-	baronAI.choice=baronAIVer6();
+	let copyGameRecord=Object.assign({},gameRecord);//ゲームレコードのコピー
+	//let copyTeban=Game.teban;//手番のコピー
+	//let copyGouhousyu//合法手のコピー
+	baronAI.choice=baronAIVer7(copyGameRecord);
 	console.log("バロンAI："+baronAI.choice);
 }
 
 //バロンAIの着手。
 function tyakusyuBaronAI(){
+	let count=0;
 	//空白＆nullチェック
 	let waitBaronAI=function(){
 					if(!baronAI.choice){
 						//バロンの着手が返ってきていない(baronAIが空白＆nullである)
 						console.log("待機しています。");
+						console.log(count);
+						count++;
 					}
 				}
 	let id =setInterval(function(){
 							waitBaronAI();
-							if(baronAI.choice){
+							if((baronAI.choice)||(count>25)){
 								clearInterval(id);
+								if(count>25){
+									console.log("不具合が発生しました。終了します。");
+									baguEndDisplay();
+									Flg.gameEnd=true;
+									return;
+								}
 								console.log("バロンの着手を受け取りました。");
 								setTimeout(function(){
 									turnOverStone(baronAI.choice);//引数を変えることでAIの強さ変更が可能
@@ -711,3 +723,13 @@ function tyakusyuBaronAI(){
 							}},200);
 }
 
+//不具合発生時のディスプレイ処理
+function baguEndDisplay(){
+	document.getElementById("teban").remove();
+	document.getElementById("gamecount").remove();
+	document.getElementById("winner").remove();//勝者表示の削除
+	document.getElementById("whiteNum").remove();//削除
+	document.getElementById("passAdvice").remove();//パス進言の削除
+	document.getElementById("endDisp").innerHTML="不具合が発生しました、終了します。";
+	document.getElementById("blackNum").innerHTML="申し訳ございませんm(_ _)m";
+}

@@ -1,4 +1,4 @@
-﻿//バロンVer6
+﻿//バロンVer7
 //合法手の評価
 var whiteGouhousyu=[];//白の合法手
 var blackGouhousyu=[];//黒の合法手
@@ -9,7 +9,8 @@ var hyoukaArray=[];//この配列の中の値が大きいインデックスを�
 
 loaded();//ロードされたら
 
-function baronAIVer6(){
+function baronAIVer7(record){
+	console.log(record);
 	checkGouhousyu();//お互いの合法手の数の確認
 	checkVirtualGouhousyu();
 	let index=hyouka();
