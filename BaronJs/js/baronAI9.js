@@ -1,4 +1,4 @@
-﻿//バロンVer7リファクタリング用
+﻿//バロンVer8テスト用
 //合法手の評価
 var whiteGouhousyu=[];//白の合法手
 var blackGouhousyu=[];//黒の合法手
@@ -9,14 +9,14 @@ var hyoukaArray=[];//この配列の中の値が大きいインデックスを�
 
 loaded();//ロードされたら
 
-function baronAIVer7(record){
-	console.log(record);
+function baronAIVer8(record){
+	//console.log(record);
 	checkGouhousyu();//お互いの合法手の数の確認
 	checkVirtualGouhousyu();
 	let index=hyouka();
 	console.log(whiteGouhousyu);
-	console.log("候補手の添え字："+index);
-	console.log(whiteGouhousyu[index]);
+	//console.log("候補手の添え字："+index);
+	//console.log(whiteGouhousyu[index]);
 	let baronAI=whiteGouhousyu[index];//バロンの候補手
 	console.log("バロンの候補手："+baronAI);
 	return baronAI;
@@ -26,11 +26,11 @@ function baronAIVer7(record){
 function checkGouhousyu(){
 	setGouhousyuArray();//合法手の確認
 	whiteGouhousyu=Array.from(gouhousyuArray);//白の合法手
-	console.log("白の合法手"+whiteGouhousyu);
+	console.log("白の合法手数"+whiteGouhousyu.length);
 	changeTeban();//手番の切り替え
 	setGouhousyuArray();//合法手の確認
 	blackGouhousyu=Array.from(gouhousyuArray);//黒の合法手
-	console.log("黒の合法手"+blackGouhousyu);
+	console.log("黒の合法手数"+blackGouhousyu.length);
 	changeTeban();//手番の切り替え
 }
 
@@ -43,10 +43,10 @@ function checkVirtualGouhousyu(){
 		//console.log(gouhousyuArray[i]);	
 		let virtualGameRecord=virtualMove(gouhousyuArray[i]);
 	}
-	console.log("白");
-	console.log(virtualWhiteGouhousyu);
-	console.log("黒");
-	console.log(virtualBlackGouhousyu);
+	//console.log("白");
+	//console.log(virtualWhiteGouhousyu);
+	//console.log("黒");
+	//console.log(virtualBlackGouhousyu);
 }
 
 //局面から合法手を仮想的に動かす。
@@ -109,8 +109,8 @@ function virtualMove(startingPoint){
 		}
 	}
 	setVirtualGouhousyuArray(virtualGameRecord);
-	console.log(Game.teban+"が"+startingPoint+"を仮想的に動かした後の合法手："+virtualGouhousyuArray);//一手仮想的に動かした後の合法手
-	console.log(virtualGouhousyuArray);
+	//console.log(Game.teban+"が"+startingPoint+"を仮想的に動かした後の合法手："+virtualGouhousyuArray);//一手仮想的に動かした後の合法手
+	//console.log(virtualGouhousyuArray);
 	//console.log(virtualGameRecord);
 	if(Game.teban=='黒(あなた)'){
 		//先読みしたの黒の合法手
@@ -144,19 +144,19 @@ function resetArray(){
 	virtualWhiteGouhousyu.length=0;
 	virtualBlackGouhousyu.length=0;
 	hyoukaArray.length=0;
-	console.log(whiteGouhousyu);
-	console.log(blackGouhousyu);
-	console.log(virtualWhiteGouhousyu);
-	console.log(virtualBlackGouhousyu);
+	//console.log(whiteGouhousyu);
+	//console.log(blackGouhousyu);
+	//console.log(virtualWhiteGouhousyu);
+	//console.log(virtualBlackGouhousyu);
 
 }
 
 //評価
 function hyouka(){
-	console.log("白前："+whiteGouhousyu);
-	console.log("黒前"+blackGouhousyu);
-	console.log("白後"+virtualWhiteGouhousyu);
-	console.log("黒後"+virtualBlackGouhousyu);
+	//console.log("白前："+whiteGouhousyu);
+	//console.log("黒前"+blackGouhousyu);
+	//console.log("白後"+virtualWhiteGouhousyu);
+	//console.log("黒後"+virtualBlackGouhousyu);
 
 	//①相手の合法手の数を考慮
 	for(let i=0;i<virtualBlackGouhousyu.length;i++){
@@ -169,21 +169,22 @@ function hyouka(){
 		}
 	}
 	
-	let sumiArray=['d1s1','d1s8','d8s1','d8s8'];//検索対象の隅
-	//②自分の合法手の中から隅の確認
-	if(checkSumi(whiteGouhousyu)){
-		console.log("684：合法手の中に隅があります。");
-		for(let i=0;i<whiteGouhousyu.length;i++){
-			if(sumiArray.indexOf(whiteGouhousyu[i])!=-1){
-				console.log(i+"番目の添え字を返します。");
-				return i;
-			}
+	//②自分の合法手の中から確定石の確認
+	let tempArray=searchFinalStone();
+	
+	for(let i=0;i<whiteGouhousyu.length;i++){
+		if(tempArray.indexOf(whiteGouhousyu[i])!=-1){
+			console.log(i+"番目の添え字を返します。");
+			return i;
 		}
 	}
+
 	//③それ以外であれば
 	console.log("白前："+whiteGouhousyu.length);
 	console.log("黒前："+blackGouhousyu.length);
 	let XArray=['d2s2','d2s7','d7s2','d7s7'];//考慮対象のX
+	let CArray=['d1s2','d1s7','d2s1','d2s8','d7s1','d7s8','d8s2','d8s7'];//考慮対象のC
+	let valueX,valueC;
 
 	for(let i=0;i<whiteGouhousyu.length;i++){
 		console.log("白後"+i+" : "+virtualWhiteGouhousyu[i].length);
@@ -194,14 +195,19 @@ function hyouka(){
 		}else{
 			valueX=0;//Xでない
 		}
+		if(CArray.indexOf(whiteGouhousyu[i])!=-1){
+			valueC=-500;//Xである
+		}else{
+			valueC=0;//Xでない
+		}
 		
 		let vw=deleteX(virtualWhiteGouhousyu[i]);//Xを削除した白の合法手
 		let vb=deleteX(virtualBlackGouhousyu[i]);//Xを削除した黒の合法手
-		let value1=(vw.length*10);//白の合法手の数を考慮
+		let value1=(vw.length*15);//白の合法手の数を考慮
 		let value2=(vb.length*(-20));//黒の合法手の数を考慮
 		let value3=sumiWatasanai(virtualBlackGouhousyu[i]);//黒の隅を考慮
 		
-		let hyoukaValue=value1+value2+value3+valueX;
+		let hyoukaValue=value1+value2+value3+valueX+valueC;
 		//白,黒の着手前の合法手の数、着手後の合法手の数、着手後の黒の隅を考慮、白のXを考慮
 		console.log("評価値："+hyoukaValue);
 		hyoukaArray.push(hyoukaValue);
@@ -343,5 +349,110 @@ function setVirtualGouhousyuArray(targetGameRecord){
 	}
 	//配列から重複した値を削除する
 	virtualGouhousyuArray=tempArray.filter((x,i,self)=>self.indexOf(x)===i);
+}
+
+//確定石--------------------------------------------------------------------------
+//白の確定石を探すgameRecord
+function searchFinalStone(){
+	let sumiArray=['d1s1','d1s8','d8s1','d8s8'];//隅のマス
+	//ループ順
+	let useLoop=['d1s1','d1s8','d1s8','d8s8','d8s8','d8s1','d8s1','d1s1'];
+	//検索順配列
+	let searchArray=[['d1s1','d1s2','d1s3','d1s4','d1s5','d1s6','d1s7'],
+					 ['d1s8','d1s7','d1s6','d1s5','d1s4','d1s3','d1s2'],
+					 ['d1s8','d2s8','d3s8','d4s8','d5s8','d6s8','d7s8'],
+					 ['d8s8','d7s8','d6s8','d5s8','d4s8','d3s8','d2s8'],
+					 ['d8s8','d8s7','d8s6','d8s5','d8s4','d8s3','d8s2'],
+					 ['d8s1','d8s2','d8s3','d8s4','d8s5','d8s6','d8s7'],
+					 ['d8s1','d7s1','d6s1','d5s1','d4s1','d3s1','d2s1'],
+					 ['d1s1','d2s1','d3s1','d4s1','d5s1','d6s1','d7s1']
+					];
+	//白の確定石を格納した配列
+	let returnArray=[];
+
+	//①隅を配列に格納する。
+	for(let i=0;i<sumiArray.length;i++){
+		if(gameRecord[sumiArray[i]]=='None'){
+			returnArray.push(sumiArray[i]);
+		}
+	}
+	
+	//②辺の確定石を探す
+	let count;
+	let targetStone;
+	let rivalStone;
+	let targetNone;
+
+	for(let y=0;y<useLoop.length;y++){
+		count=0;
+		targetStone=decisionStone1(gameRecord[useLoop[y]]);
+		rivalStone=decisionStone2(gameRecord[useLoop[y]]);
+		if(targetStone=="white"){
+			for(let x=0;x<searchArray[y].length;x++){
+				if(gameRecord[searchArray[y][x]]=='None'){
+					targetNone=searchArray[y][x];
+					break;
+				}else{
+					targetNone="空き無し";
+				}
+			}
+			if(targetNone=="空き無し"){
+				continue;
+			}
+			//console.log(targetNone);
+			//console.log(targetStone);
+			//console.log(rivalStone);
+
+			for(let i=0;i<searchArray[y].length;i++){
+				//console.log(i+":"+gameRecord[searchArray[y][i]]);
+				if(gameRecord[searchArray[y][i]]==rivalStone){
+					targetStone=changeStone(targetStone);
+					rivalStone=changeStone(rivalStone);
+					console.log("targetStone:"+targetStone);
+					console.log("rivalStone:"+rivalStone);
+					count++;
+				}
+				if(gameRecord[searchArray[y][i]]=='None'){
+					if(count<2){
+						returnArray.push(targetNone);
+					}
+					break;
+				}
+			}
+			continue;
+		}else if(targetStone=="black"){
+			//隅が黒石の時
+			continue;
+		}
+	}
+	console.log("確定石になるマス:"+returnArray);
+	return returnArray;
+}
+
+//石の決定１
+function decisionStone1(target){
+	if(target=="white"){
+		return "white";
+	}else if(target=="black"){
+		return "black";
+	}
+}
+
+//石の決定２
+function decisionStone2(target){
+	if(target=="white"){
+		return "black";
+	}else if(target=="black"){
+		return "white";
+	}
+}
+
+//石の変換
+function changeStone(target){
+	if(target=="white"){
+		return "black";
+	}else if(target=="black"){
+		return "white";
+	}
 }
 
