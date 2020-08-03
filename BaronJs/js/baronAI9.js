@@ -9,7 +9,7 @@ var hyoukaArray=[];//この配列の中の値が大きいインデックスを�
 
 loaded();//ロードされたら
 
-function baronAIVer8(record){
+function baronAIVer9(record){
 	//console.log(record);
 	checkGouhousyu();//お互いの合法手の数の確認
 	checkVirtualGouhousyu();
@@ -196,7 +196,7 @@ function hyouka(){
 			valueX=0;//Xでない
 		}
 		if(CArray.indexOf(whiteGouhousyu[i])!=-1){
-			valueC=-500;//Xである
+			valueC=-50;//Xである
 		}else{
 			valueC=0;//Xでない
 		}
