@@ -9,7 +9,7 @@ var hyoukaArray=[];//この配列の中の値が大きいインデックスを�
 
 loaded();//ロードされたら
 
-function baronAIVer9(record){
+function baronAIVer8(record){
 	//console.log(record);
 	checkGouhousyu();//お互いの合法手の数の確認
 	checkVirtualGouhousyu();
@@ -19,6 +19,7 @@ function baronAIVer9(record){
 	//console.log(whiteGouhousyu[index]);
 	let baronAI=whiteGouhousyu[index];//バロンの候補手
 	console.log("バロンの候補手："+baronAI);
+	resetArray();
 	return baronAI;
 }
 
@@ -196,7 +197,7 @@ function hyouka(){
 			valueX=0;//Xでない
 		}
 		if(CArray.indexOf(whiteGouhousyu[i])!=-1){
-			valueC=-50;//Xである
+			valueC=-500;//Xである
 		}else{
 			valueC=0;//Xでない
 		}
