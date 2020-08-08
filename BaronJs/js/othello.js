@@ -98,7 +98,7 @@ function userCheck(){
 
 //開始時の表示
 function startDisplay(){
-	document.getElementById("com").innerHTML="COM：バロン Ver9.0809";//comのversion
+	document.getElementById("com").innerHTML="COM：バロン Ver10.0809";//comのversion
 	document.getElementById("teban").innerHTML=Game.teban+"の手番です";//手番の表示
 	document.getElementById("gamecount").innerHTML=Game.count+"手目";//何手目の表示
 	document.getElementById("blackNum").innerHTML="黒石："+Game.blackNum;//黒石の数
@@ -261,7 +261,7 @@ function touchScreen(tx,ty){
 				Flg.renzokuPass=false;//合法手がある。
 				
 				//AIファイルの読みこみからAI着手
-				readBaronAI("./js/baronAI9.js");
+				readBaronAI("./js/baronAI10.js");
 				tyakusyuBaronAI();//baronAIの着手
 				return;
 			}
@@ -603,7 +603,7 @@ function passButton(){
 			Flg.canBePlaced=false;//プレイヤーが石を置けない状態にする。
 			Flg.renzokuPass=false;//合法手がある。
 			//AIファイルの読みこみからAI着手
-			readBaronAI("./js/baronAI9.js");
+			readBaronAI("./js/baronAI10.js");
 			tyakusyuBaronAI();//baronAIの着手
 			return;
 		}
@@ -660,7 +660,7 @@ function loaded(){
 	let copyGameRecord=Object.assign({},gameRecord);//ゲームレコードのコピー
 	//let copyTeban=Game.teban;//手番のコピー
 	//let copyGouhousyu//合法手のコピー
-	baronAI.choice=baronAIVer9(copyGameRecord);
+	baronAI.choice=baronAIVer10(copyGameRecord);
 	console.log("バロンAI："+baronAI.choice);
 }
 
