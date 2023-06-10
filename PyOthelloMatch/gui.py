@@ -85,9 +85,9 @@ class OtelloGui(tk.Tk):
         #boardの描写
         self.create_board()
     
-    def kotai_jyunbi(self):
-        ra=battle.Battle(self.teban,self.game_recode,self.gouhousyu_array,100)
-        self.random_array=ra.get_random_array()
+    #def kotai_jyunbi(self):
+        #ra=battle.Battle(self.teban,self.game_recode,self.gouhousyu_array,100)
+        #self.random_array=ra.get_random_array()
         # temp_name=self.random_array.pop(0)
     
     def create_board(self):
